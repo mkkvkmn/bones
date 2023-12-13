@@ -4,45 +4,45 @@ import markdown
 import yaml
 import logging
 import time
+import argparse
+import shutil
 from jinja2 import Environment, FileSystemLoader
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Directory configurations
-OUTPUT_DIR = '_public'          # Output directory for generated HTML files
-POSTS_DIR = 'posts'             # Directory containing Markdown posts
-TEMPLATES_DIR = 'templates'     # Directory for Jinja2 templates
+OUTPUT_DIR = '_public'
+POSTS_DIR = 'posts'
+TEMPLATES_DIR = 'templates'
 TEMPLATE_FOR_POST = 'post.html'
 
 # Initialize Jinja environment once and load templates
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
 post_template = env.get_template(TEMPLATE_FOR_POST)
 
-def parse_front_matter(file_content):
-    """
-    Parses the YAML front matter and returns a dictionary of metadata
-    and the Markdown content without the front matter.
-    """
-    # get front matter from post between --- and ---
+def parse_front_matter(file_content, filename):
     pattern = re.compile(r'^---\s+(.*?)\s+---\s+(.*)', re.DOTALL)
     match = pattern.match(file_content)
     if match:
         front_matter = yaml.safe_load(match.group(1))
         content = match.group(2)
+
+        if 'url' not in front_matter:
+            # Generate URL from filename if not present in front matter
+            base_filename = filename.rsplit('.', 1)[0]
+            url = re.sub(r'[^\w\s-]', '', base_filename).replace(' ', '-').lower()
+            front_matter['url'] = url
+
         return front_matter, content
     else:
         return {}, file_content
 
-
 def markdown_to_html(md_content):
     return markdown.markdown(md_content)
 
-
 def apply_template(front_matter, html_content):
-    # Use the pre-loaded template
     return post_template.render(post=front_matter, content=html_content)
-
 
 def is_outdated(source_path, output_path, template_mod_time):
     if not os.path.exists(output_path):
@@ -51,9 +51,13 @@ def is_outdated(source_path, output_path, template_mod_time):
     output_mod_time = os.path.getmtime(output_path)
     return source_mod_time > output_mod_time or template_mod_time > output_mod_time
 
+def generate_site(full_rebuild=False):
+    start_time = time.time()
 
-def generate_site():
-    start_time = time.time()  # Start timing the build process
+    if full_rebuild:
+        logging.info("Full rebuild. Clearing the output directory...")
+        if os.path.exists(OUTPUT_DIR):
+            shutil.rmtree(OUTPUT_DIR)
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
@@ -65,22 +69,27 @@ def generate_site():
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
             source_path = md_file.path
-            output_path = f'{OUTPUT_DIR}/{md_file.name.replace(".md", ".html")}'
+            with open(source_path, 'r') as file:
+                file_content = file.read()
+                front_matter, md_content = parse_front_matter(file_content, md_file.name)
+                html_content = markdown_to_html(md_content)
+                final_output = apply_template(front_matter, html_content)
 
-            if is_outdated(source_path, output_path, template_mod_time):
-                logging.info(f"Building: {md_file.name}")
-                with open(source_path, 'r') as file:
-                    file_content = file.read()
-                    front_matter, md_content = parse_front_matter(file_content)
-                    html_content = markdown_to_html(md_content)
-                    final_output = apply_template(front_matter, html_content)
+                output_dir_path = os.path.join(OUTPUT_DIR, front_matter['url'])
+                os.makedirs(output_dir_path, exist_ok=True)
+                output_file_path = os.path.join(output_dir_path, 'index.html')
 
-                    with open(output_path, 'w') as file:
+                if is_outdated(source_path, output_file_path, template_mod_time):
+                    logging.info(f"Building: {front_matter['url']}")
+                    with open(output_file_path, 'w') as file:
                         file.write(final_output)
 
-    elapsed_time = time.time() - start_time 
+    elapsed_time = time.time() - start_time
     logging.info(f"Done in {elapsed_time:.2f} seconds")
 
-
 if __name__ == "__main__":
-    generate_site()
+    parser = argparse.ArgumentParser(description="Static Site Generator")
+    parser.add_argument("--full", action="store_true", help="Perform a full site rebuild")
+    args = parser.parse_args()
+
+    generate_site(full_rebuild=args.full)

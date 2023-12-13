@@ -1,6 +1,7 @@
 ---
 title: My Second Post
 date: 2023-03-10
+url: sample2
 ---
 
 # Welcome to Bones

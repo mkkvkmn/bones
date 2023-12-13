@@ -1,6 +1,7 @@
 ---
 title: My First Post
 date: 2023-03-10
+url: sample
 ---
 
 # Welcome to Bones

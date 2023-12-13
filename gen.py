@@ -48,10 +48,14 @@ def is_outdated(source_path, output_path, template_mod_time):
     return source_mod_time > output_mod_time or template_mod_time > output_mod_time
 
 
-def collect_posts_metadata():
+def collect_metadata():
     posts_metadata = []
     url_set = set()
     latest_post_mod_time = 0
+
+    template_mod_time = max(os.path.getmtime(f.path)
+                        for f in os.scandir(TEMPLATES_DIR)
+                        if f.is_file())
 
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
@@ -75,43 +79,12 @@ def collect_posts_metadata():
                 'url': url
             })
 
-    return posts_metadata, latest_post_mod_time
+    return posts_metadata, latest_post_mod_time, template_mod_time
 
 
-def build_archive_page(posts_metadata):
-    posts_metadata.sort(key=lambda x: x['date'], reverse=True)
-    archive_template = env.get_template(TEMPLATE_FOR_ARCHIVE)
-    archive_content = archive_template.render(posts=posts_metadata)
-    archive_output_dir = os.path.join(OUTPUT_DIR, ARCHIVE_URL)
-    os.makedirs(archive_output_dir, exist_ok=True)
-    logging.info(f"Building: Archive (url: {ARCHIVE_URL})")
-    with open(os.path.join(archive_output_dir, 'index.html'), 'w') as file:
-        file.write(archive_content)
-
-
-def generate_site(full_rebuild=False):
-    start_time = time.time()
-
-    try:
-        logging.info("Checking metadata...")
-        posts_metadata, latest_post_mod_time = collect_posts_metadata()
-    except ValueError as e:
-        logging.error(e)
-        return
-
-    if full_rebuild:
-        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
-        if os.path.exists(OUTPUT_DIR):
-            shutil.rmtree(OUTPUT_DIR)
-
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
-    template_mod_time = max(os.path.getmtime(f.path)
-                            for f in os.scandir(TEMPLATES_DIR)
-                            if f.is_file())
-    
+def build_archive(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild=False):
     archive_output_path = os.path.join(OUTPUT_DIR, ARCHIVE_URL, 'index.html')
+
     archive_needs_rebuild = (
         full_rebuild or 
         not os.path.exists(archive_output_path) or 
@@ -120,28 +93,62 @@ def generate_site(full_rebuild=False):
     )
 
     if archive_needs_rebuild:
-        build_archive_page(posts_metadata)
+        posts_metadata.sort(key=lambda x: x['date'], reverse=True)
+        archive_template = env.get_template(TEMPLATE_FOR_ARCHIVE)
+        archive_content = archive_template.render(posts=posts_metadata)
+        os.makedirs(os.path.join(OUTPUT_DIR, ARCHIVE_URL), exist_ok=True)
+        logging.info(f"Building: Archive (url: {ARCHIVE_URL})")
+        with open(archive_output_path, 'w') as file:
+            file.write(archive_content)
 
+
+def setup_output_directory(full_rebuild):
+    if full_rebuild:
+        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
+        if os.path.exists(OUTPUT_DIR):
+            shutil.rmtree(OUTPUT_DIR)
+
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+
+def build_posts(template_mod_time):
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
             source_path = md_file.path
             with open(source_path, 'r') as file:
                 file_content = file.read()
-                front_matter, md_content = parse_front_matter(file_content, md_file.name)
-                html_content = markdown_to_html(md_content)
+            front_matter, md_content = parse_front_matter(file_content, md_file.name)
+            html_content = markdown_to_html(md_content)
+
+            output_dir_path = os.path.join(OUTPUT_DIR, front_matter['url'])
+            os.makedirs(output_dir_path, exist_ok=True)
+            output_file_path = os.path.join(output_dir_path, 'index.html')
+
+            if is_outdated(source_path, output_file_path, template_mod_time):
+                logging.info(f"Building: {front_matter['url']}")
                 final_output = apply_template(front_matter, html_content)
+                with open(output_file_path, 'w') as file:
+                    file.write(final_output)
 
-                output_dir_path = os.path.join(OUTPUT_DIR, front_matter['url'])
-                os.makedirs(output_dir_path, exist_ok=True)
-                output_file_path = os.path.join(output_dir_path, 'index.html')
 
-                if is_outdated(source_path, output_file_path, template_mod_time):
-                    logging.info(f"Building: {front_matter['url']}")
-                    with open(output_file_path, 'w') as file:
-                        file.write(final_output)
+def generate_site(full_rebuild=False):
+    start_time = time.time()
+
+    setup_output_directory(full_rebuild)
+
+    try:
+        posts_metadata, latest_post_mod_time, template_mod_time = collect_metadata()
+    except ValueError as e:
+        logging.error(e)
+        return
+
+    build_archive(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild)
+    build_posts(template_mod_time)
 
     elapsed_time = time.time() - start_time
     logging.info(f"Done in {elapsed_time:.2f} seconds")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Static Site Generator")

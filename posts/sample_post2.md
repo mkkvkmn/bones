@@ -1,5 +1,8 @@
 ---
 title: My Second Post
+excerpt: >
+    This is going to say something
+    that is multiline
 date: 2023-03-11
 url: sample2
 ---

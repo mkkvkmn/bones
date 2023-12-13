@@ -17,19 +17,20 @@ POSTS_DIR = 'posts'
 TEMPLATES_DIR = 'templates'
 TEMPLATE_FOR_POST = 'post.html'
 TEMPLATE_FOR_ARCHIVE = 'archive.html'
+TEMPLATE_FOR_LANDING = 'landing.html'
 ARCHIVE_URL = 'a'
 
 # Initialize Jinja environment once and load templates
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
 post_template = env.get_template(TEMPLATE_FOR_POST)
 
-def parse_front_matter(file_content, filename):
+def parse_front_matter(file_content):
     pattern = re.compile(r'^---\s+(.*?)\s+---\s+(.*)', re.DOTALL)
     match = pattern.match(file_content)
     if match:
         front_matter = yaml.safe_load(match.group(1))
         content = match.group(2)
-
+        # print(front_matter)
         return front_matter, content
     else:
         return {}, file_content
@@ -48,7 +49,7 @@ def is_outdated(source_path, output_path, template_mod_time):
     return source_mod_time > output_mod_time or template_mod_time > output_mod_time
 
 
-def collect_metadata():
+def get_metadata():
     posts_metadata = []
     url_set = set()
     latest_post_mod_time = 0
@@ -64,7 +65,7 @@ def collect_metadata():
 
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
-            front_matter, _ = parse_front_matter(file_content, md_file.name)
+            front_matter, _ = parse_front_matter(file_content)
 
             url = front_matter.get('url')
             if not url:
@@ -75,11 +76,49 @@ def collect_metadata():
 
             posts_metadata.append({
                 'title': front_matter.get('title', ''),
+                'excerpt': front_matter.get('excerpt', ''),
                 'date': front_matter.get('date', ''),
                 'url': url
             })
 
     return posts_metadata, latest_post_mod_time, template_mod_time
+
+
+def get_latest_post_metadata(posts_metadata):
+    if posts_metadata:
+        # print(max(posts_metadata, key=lambda x: x['date']))
+        return max(posts_metadata, key=lambda x: x['date'])
+    return None
+
+
+def setup_output_directory(full_rebuild):
+    if full_rebuild:
+        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
+        if os.path.exists(OUTPUT_DIR):
+            shutil.rmtree(OUTPUT_DIR)
+
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+
+def build_landing(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild=False):
+    landing_output_path = os.path.join(OUTPUT_DIR, 'index.html')
+
+    landing_needs_rebuild = (
+        full_rebuild or 
+        not os.path.exists(landing_output_path) or 
+        os.path.getmtime(landing_output_path) < latest_post_mod_time or 
+        os.path.getmtime(landing_output_path) < template_mod_time
+    )
+    
+    if landing_needs_rebuild:
+        latest_post = get_latest_post_metadata(posts_metadata)
+        landing_template = env.get_template('landing.html')
+        landing_content = landing_template.render(latest_post=latest_post)
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
+        logging.info("Building: Landing Page")
+        with open(landing_output_path, 'w') as file:
+            file.write(landing_content)
 
 
 def build_archive(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild=False):
@@ -102,23 +141,13 @@ def build_archive(posts_metadata, template_mod_time, latest_post_mod_time, full_
             file.write(archive_content)
 
 
-def setup_output_directory(full_rebuild):
-    if full_rebuild:
-        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
-        if os.path.exists(OUTPUT_DIR):
-            shutil.rmtree(OUTPUT_DIR)
-
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
-
 def build_posts(template_mod_time):
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
             source_path = md_file.path
             with open(source_path, 'r') as file:
                 file_content = file.read()
-            front_matter, md_content = parse_front_matter(file_content, md_file.name)
+            front_matter, md_content = parse_front_matter(file_content)
             html_content = markdown_to_html(md_content)
 
             output_dir_path = os.path.join(OUTPUT_DIR, front_matter['url'])
@@ -138,11 +167,12 @@ def generate_site(full_rebuild=False):
     setup_output_directory(full_rebuild)
 
     try:
-        posts_metadata, latest_post_mod_time, template_mod_time = collect_metadata()
+        posts_metadata, latest_post_mod_time, template_mod_time = get_metadata()
     except ValueError as e:
         logging.error(e)
         return
 
+    build_landing(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild)
     build_archive(posts_metadata, template_mod_time, latest_post_mod_time, full_rebuild)
     build_posts(template_mod_time)
 

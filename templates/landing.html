@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section class="hero">
+        <h1>Your Hero Title</h1>
+        <p>Your hero description...</p>
+    </section>
+
+    <section class="latest-post">
+        <h2>{{ latest_post.title }}</h2>
+        <p>{{ latest_post.excerpt }}</p>
+        <a href="{{ latest_post.url }}">Read More</a>
+    </section>
+{% endblock %}

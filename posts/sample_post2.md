@@ -18,4 +18,4 @@ Bones is lightweight, easy to use, and efficient. It's perfect for those who nee
 - **Minimalist Design**: Focus on your content without worrying about unnecessary features.
 - **Easy to Extend**: Add more features as you grow your site.
 
-Thanks for reading!
+Thanks for readingss!

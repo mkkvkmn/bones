@@ -52,6 +52,12 @@ def is_outdated(source_path, output_path, template_mod_time):
 def collect_posts_metadata():
     posts_metadata = []
     url_set = set()
+    latest_post_mod_time = 0
+
+    for md_file in os.scandir(POSTS_DIR):
+        if md_file.name.endswith('.md'):
+            post_mod_time = os.path.getmtime(md_file.path)
+            latest_post_mod_time = max(latest_post_mod_time, post_mod_time)
 
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
@@ -73,7 +79,7 @@ def collect_posts_metadata():
                     'url': url
                 })
 
-    return posts_metadata
+    return posts_metadata, latest_post_mod_time
 
 
 def build_archive_page(posts_metadata):
@@ -92,7 +98,7 @@ def generate_site(full_rebuild=False):
 
     try:
         logging.info("Checking metadata...")
-        posts_metadata = collect_posts_metadata()
+        posts_metadata, latest_post_mod_time = collect_posts_metadata()
     except ValueError as e:
         logging.error(e)
         return
@@ -104,12 +110,21 @@ def generate_site(full_rebuild=False):
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-    
-    build_archive_page(posts_metadata)
 
     template_mod_time = max(os.path.getmtime(f.path)
                             for f in os.scandir(TEMPLATES_DIR)
                             if f.is_file())
+    
+    archive_output_path = os.path.join(OUTPUT_DIR, ARCHIVE_URL, 'index.html')
+    archive_needs_rebuild = (
+        full_rebuild or 
+        not os.path.exists(archive_output_path) or 
+        os.path.getmtime(archive_output_path) < latest_post_mod_time or 
+        os.path.getmtime(archive_output_path) < template_mod_time
+    )
+
+    if archive_needs_rebuild:
+        build_archive_page(posts_metadata)
 
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):

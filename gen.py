@@ -31,12 +31,6 @@ def parse_front_matter(file_content, filename):
         front_matter = yaml.safe_load(match.group(1))
         content = match.group(2)
 
-        if 'url' not in front_matter:
-            # Generate URL from filename if not present in front matter
-            base_filename = filename.rsplit('.', 1)[0]
-            url = re.sub(r'[^\w\s-]', '', base_filename).replace(' ', '-').lower()
-            front_matter['url'] = url
-
         return front_matter, content
     else:
         return {}, file_content
@@ -57,17 +51,30 @@ def is_outdated(source_path, output_path, template_mod_time):
 
 def collect_posts_metadata():
     posts_metadata = []
+    url_set = set()
+
     for md_file in os.scandir(POSTS_DIR):
         if md_file.name.endswith('.md'):
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
                 front_matter, _ = parse_front_matter(file_content, md_file.name)
+                url = front_matter.get('url')
+
+                if not url:
+                    raise ValueError(f"Missing URL in front matter of {md_file.name}")
+
+                if url in url_set:
+                    raise ValueError(f"Duplicate URL '{url}' found in {md_file.name}")
+                url_set.add(url)
+
                 posts_metadata.append({
                     'title': front_matter.get('title', ''),
                     'date': front_matter.get('date', ''),
-                    'url': front_matter.get('url', '')
+                    'url': url
                 })
+
     return posts_metadata
+
 
 def build_archive_page(posts_metadata):
     posts_metadata.sort(key=lambda x: x['date'], reverse=True)
@@ -83,16 +90,21 @@ def build_archive_page(posts_metadata):
 def generate_site(full_rebuild=False):
     start_time = time.time()
 
+    try:
+        logging.info("Checking metadata...")
+        posts_metadata = collect_posts_metadata()
+    except ValueError as e:
+        logging.error(e)
+        return
+
     if full_rebuild:
-        logging.info("Full rebuild. Clearing the output directory...")
+        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
         if os.path.exists(OUTPUT_DIR):
             shutil.rmtree(OUTPUT_DIR)
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-
-    # Build archive page
-    posts_metadata = collect_posts_metadata()
+    
     build_archive_page(posts_metadata)
 
     template_mod_time = max(os.path.getmtime(f.path)

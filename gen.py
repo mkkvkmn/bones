@@ -8,14 +8,17 @@ import argparse
 import shutil
 from jinja2 import Environment, FileSystemLoader
 
-# Logging configuration
+# logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Directory configurations
+# configurations
 OUTPUT_DIR = '_public'
 POSTS_DIR = 'posts'
 TEMPLATES_DIR = 'templates'
 TEMPLATE_FOR_POST = 'post.html'
+TEMPLATE_FOR_ARCHIVE = 'archive.html'
+ARCHIVE_URL = 'a'
+
 
 # Initialize Jinja environment once and load templates
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
@@ -51,6 +54,32 @@ def is_outdated(source_path, output_path, template_mod_time):
     output_mod_time = os.path.getmtime(output_path)
     return source_mod_time > output_mod_time or template_mod_time > output_mod_time
 
+
+def collect_posts_metadata():
+    posts_metadata = []
+    for md_file in os.scandir(POSTS_DIR):
+        if md_file.name.endswith('.md'):
+            with open(md_file.path, 'r') as file:
+                file_content = file.read()
+                front_matter, _ = parse_front_matter(file_content, md_file.name)
+                posts_metadata.append({
+                    'title': front_matter.get('title', ''),
+                    'date': front_matter.get('date', ''),
+                    'url': front_matter.get('url', '')
+                })
+    return posts_metadata
+
+def build_archive_page(posts_metadata):
+    posts_metadata.sort(key=lambda x: x['date'], reverse=True)
+    archive_template = env.get_template(TEMPLATE_FOR_ARCHIVE)
+    archive_content = archive_template.render(posts=posts_metadata)
+    archive_output_dir = os.path.join(OUTPUT_DIR, ARCHIVE_URL)
+    os.makedirs(archive_output_dir, exist_ok=True)
+    logging.info(f"Building: Archive (url: {ARCHIVE_URL})")
+    with open(os.path.join(archive_output_dir, 'index.html'), 'w') as file:
+        file.write(archive_content)
+
+
 def generate_site(full_rebuild=False):
     start_time = time.time()
 
@@ -61,6 +90,10 @@ def generate_site(full_rebuild=False):
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
+
+    # Build archive page
+    posts_metadata = collect_posts_metadata()
+    build_archive_page(posts_metadata)
 
     template_mod_time = max(os.path.getmtime(f.path)
                             for f in os.scandir(TEMPLATES_DIR)

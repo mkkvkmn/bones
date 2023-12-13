@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <!-- Add your CSS links here -->
+</head>
+<body>
+    <header>
+        <!-- Header content goes here -->
+        <h1>Bones - The Minimalist Static Site Generator</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Main content will be overridden in other templates -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Footer content goes here -->
+        <p>© 2023 Bones Static Site Generator</p>
+    </footer>
+</body>
+</html>

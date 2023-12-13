@@ -19,7 +19,6 @@ TEMPLATE_FOR_POST = 'post.html'
 TEMPLATE_FOR_ARCHIVE = 'archive.html'
 ARCHIVE_URL = 'a'
 
-
 # Initialize Jinja environment once and load templates
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
 post_template = env.get_template(TEMPLATE_FOR_POST)
@@ -59,25 +58,22 @@ def collect_posts_metadata():
             post_mod_time = os.path.getmtime(md_file.path)
             latest_post_mod_time = max(latest_post_mod_time, post_mod_time)
 
-    for md_file in os.scandir(POSTS_DIR):
-        if md_file.name.endswith('.md'):
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
-                front_matter, _ = parse_front_matter(file_content, md_file.name)
-                url = front_matter.get('url')
+            front_matter, _ = parse_front_matter(file_content, md_file.name)
 
-                if not url:
-                    raise ValueError(f"Missing URL in front matter of {md_file.name}")
+            url = front_matter.get('url')
+            if not url:
+                raise ValueError(f"Missing URL in front matter of {md_file.name}")
+            if url in url_set:
+                raise ValueError(f"Duplicate URL '{url}' found in {md_file.name}")
+            url_set.add(url)
 
-                if url in url_set:
-                    raise ValueError(f"Duplicate URL '{url}' found in {md_file.name}")
-                url_set.add(url)
-
-                posts_metadata.append({
-                    'title': front_matter.get('title', ''),
-                    'date': front_matter.get('date', ''),
-                    'url': url
-                })
+            posts_metadata.append({
+                'title': front_matter.get('title', ''),
+                'date': front_matter.get('date', ''),
+                'url': url
+            })
 
     return posts_metadata, latest_post_mod_time
 

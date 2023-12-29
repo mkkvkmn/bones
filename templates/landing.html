@@ -7,8 +7,8 @@
     </section>
 
     <section class="latest-post">
-        <h2>{{ latest_post.title }}</h2>
-        <p>{{ latest_post.excerpt }}</p>
-        <a href="{{ latest_post.url }}">Read More</a>
+        <h2>{{ meta['latest_post'].title }}</h2>
+        <p>{{ meta['latest_post'].excerpt }}</p>
+        <a href="{{ url }}">Read More</a>
     </section>
 {% endblock %}

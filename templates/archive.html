@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Archivesss</h2>
 <ul>
-    {% for post in posts %}
+    {% for post in meta['posts'] %}
     <li>
         <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date }}
     </li>

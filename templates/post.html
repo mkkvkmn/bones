@@ -2,10 +2,10 @@
 
 {% block content %}
     <article>
-        <h2>{{ post.title }}</h2>
-        <p>Published on: {{ post.date }}</p>
+        <h2>{{ meta['post'].title }}</h2>
+        <p>Published on: {{ meta['post'].date }}</p>
         <div>
-            {{ post.content | safe }}
+            {{ meta['post'].content | safe }}
         </div>
     </article>
 {% endblock %}

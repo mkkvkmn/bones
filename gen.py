@@ -46,21 +46,6 @@ def parse_front_matter(file_content):
     else:
         return {}, file_content
 
-def markdown_to_html(md_content):
-    return markdown.markdown(md_content)
-
-
-def apply_template(front_matter, html_content):
-    return post_template.render(post=front_matter, content=html_content)
-
-
-def is_outdated(source_path, output_path, last_template_mod_time):
-    if not os.path.exists(output_path):
-        return True
-    source_mod_time = os.path.getmtime(source_path)
-    output_mod_time = os.path.getmtime(output_path)
-    return source_mod_time > output_mod_time or last_template_mod_time > output_mod_time
-
 
 def get_meta():
     posts_meta = []
@@ -76,9 +61,9 @@ def get_meta():
 
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
-            front_matter, _ = parse_front_matter(file_content)
+            front_matter, md_content = parse_front_matter(file_content)
 
-            url = front_matter.get('url')
+            url = front_matter.get('url').strip('/')
             if not url:
                 raise ValueError(f"Missing URL in front matter of {md_file.name}")
             if url in url_set:
@@ -89,8 +74,10 @@ def get_meta():
                 'title': front_matter.get('title', ''),
                 'excerpt': front_matter.get('excerpt', ''),
                 'date': front_matter.get('date', ''),
-                'url': url
-                ,'filename': md_file.name
+                'url': url,
+                'filename': md_file.name,
+                'front_matter':front_matter,
+                'content': md_content
             })
 
     latest_post = max(posts_meta, key=lambda x: x['date'])
@@ -144,22 +131,16 @@ def build_archive(meta, full_rebuild=False):
 
     
 def build_posts(meta, full_rebuild=False):
-
     for post_meta in meta['posts']:
         source_path = os.path.join(POSTS_DIR, post_meta['filename'])
+        output_path = os.path.join(OUTPUT_DIR, post_meta['url'], 'index.html')
+        source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
+        output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
 
-        if os.path.exists(source_path):
-            with open(source_path, 'r') as file:
-                file_content = file.read()
-
-            front_matter, md_content = parse_front_matter(file_content)
-            html_content = markdown_to_html(md_content)
-            output_file_path = os.path.join(OUTPUT_DIR, front_matter['url'], 'index.html')
-            needs_rebuild = full_rebuild or is_outdated(source_path, output_file_path, meta['last_template_mod_time'])
-
-            if needs_rebuild:
-                page_meta = {**meta, 'post': front_matter,'content': html_content,}
-                build_page(TEMPLATE_FOR_POST, output_file_path, page_meta)
+        if os.path.exists(source_path) and source_mod_time > output_mod_time:
+            html_content = markdown.markdown((post_meta['content']))
+            page_meta = {**meta, 'post': post_meta['front_matter'],'content': html_content,}
+            build_page(TEMPLATE_FOR_POST, output_path, page_meta,full_rebuild)
 
 
 def generate_site(full_rebuild=False):

@@ -1,9 +1,9 @@
 ---
+date: 2023-03-11
 title: My Second Post
-excerpt: >
+description: >
     This is going to say something
     that is multiline
-date: 2023-03-11
 url: sample2
 ---
 

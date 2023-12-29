@@ -1,8 +1,23 @@
 {% block head %}
+
+{% set title = meta['site']['title'] -%}
+{% if meta['post'] and meta['post']['title'] -%}
+    {% set title = meta['post']['title'] -%}
+{% elif meta['page'] and meta['page']['title']-%}
+    {% set title = meta['page']['title'] -%}
+{% endif -%}
+
+{% set description = meta['site']['description'] -%}
+{% if meta['post'] and meta['post']['description'] -%}
+    {% set description = meta['post']['description'] -%}
+{% elif meta['page'] and meta['page']['description']-%}
+    {% set description = meta['page']['description'] -%}
+{% endif -%}
+
 <head>
     <meta charset="UTF-8">
-    <title>{{ meta['site']['site_name'] }}</title>
-    <meta name="description" content="{{ excerpta}}">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="{{ request }}">
 

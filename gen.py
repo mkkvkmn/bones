@@ -13,24 +13,35 @@ from jinja2 import Environment, FileSystemLoader
 # logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Global site properties
-SITE_PROPERTIES = {
-    "site_name": "My Awesome Blog",
-    "site_description": "A blog about awesome things.",
-    # Add more global properties as needed
+# global
+SITE = {
+    'title': 'My Awesome Blog',
+    'description': 'A blog about awesome things.',
+    'landing': {
+        'dir': '',
+        'template': 'landing.html'
+    },
+    'archive': {
+        'dir': '',
+        'template': 'archive.html',
+        'url':'a',
+        'title':'Archive',
+        'description':'Description for archive',
+    },
+    'post': {
+        'dir': 'posts',
+        'template': 'post.html'
+    },
+    'templates': {
+        'dir': 'templates'
+    },
+    'output': {
+        'dir': '_public'
+    },
 }
 
-# configurations
-OUTPUT_DIR = '_public'
-POSTS_DIR = 'posts'
-TEMPLATES_DIR = 'templates'
-TEMPLATE_FOR_POST = 'post.html'
-TEMPLATE_FOR_ARCHIVE = 'archive.html'
-TEMPLATE_FOR_LANDING = 'landing.html'
-ARCHIVE_URL = 'a'
-
 # init jinja
-env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
+env = Environment(loader=FileSystemLoader(SITE['templates']['dir']))
 
 
 def parse_front_matter(file_content):
@@ -49,9 +60,9 @@ def get_meta():
     url_set = set()
     last_post_mod_time = 0
 
-    last_template_mod_time = max(os.path.getmtime(f.path) for f in os.scandir(TEMPLATES_DIR) if f.is_file())
+    last_template_mod_time = max(os.path.getmtime(f.path) for f in os.scandir(SITE['templates']['dir']) if f.is_file())
 
-    for md_file in os.scandir(POSTS_DIR):
+    for md_file in os.scandir(SITE['post']['dir']):
         if md_file.name.endswith('.md'):
             post_mod_time = os.path.getmtime(md_file.path)
             last_post_mod_time = max(last_post_mod_time, post_mod_time)
@@ -84,20 +95,21 @@ def get_meta():
         'last_template_mod_time':last_template_mod_time,
         'posts':posts_meta,
         'latest_post':latest_post,
-        'site':SITE_PROPERTIES,
+        'site':SITE,
     }
 
     return meta
 
 
 def rebuild(full_rebuild):
+    output_dir = SITE['output']['dir']
     if full_rebuild:
-        logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
-        if os.path.exists(OUTPUT_DIR):
-            shutil.rmtree(OUTPUT_DIR)
+        logging.info(f"Full rebuild: clearing folder {output_dir}...")
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
 
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
 
 def build_page(template_name, output_path, meta, full_rebuild=False):
@@ -118,26 +130,28 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
 
  
 def build_landing(meta, full_rebuild=False):
-    output_path = os.path.join(OUTPUT_DIR, 'index.html')
-    build_page(TEMPLATE_FOR_LANDING, output_path, meta, full_rebuild)
+    output_path = os.path.join(SITE['output']['dir'], 'index.html')
+    page_meta = {**meta, 'page': SITE['landing']}
+    build_page(SITE['landing']['template'], output_path, page_meta, full_rebuild)
 
 
 def build_archive(meta, full_rebuild=False):
-    output_path = os.path.join(OUTPUT_DIR, ARCHIVE_URL, 'index.html')
-    build_page(TEMPLATE_FOR_ARCHIVE, output_path, meta, full_rebuild)
+    output_path = os.path.join(SITE['output']['dir'], SITE['archive']['url'], 'index.html')
+    page_meta = {**meta, 'page': SITE['archive']}
+    build_page(SITE['archive']['template'], output_path, page_meta, full_rebuild)
 
     
 def build_posts(meta, full_rebuild=False):
     for post_meta in meta['posts']:
-        source_path = os.path.join(POSTS_DIR, post_meta['filename'])
-        output_path = os.path.join(OUTPUT_DIR, post_meta['url'], 'index.html')
+        source_path = os.path.join(SITE['post']['dir'], post_meta['filename'])
+        output_path = os.path.join(SITE['output']['dir'], post_meta['url'], 'index.html')
         source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
         output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
 
         if os.path.exists(source_path) and source_mod_time > output_mod_time:
             html_content = markdown.markdown((post_meta['content']))
             page_meta = {**meta, 'post': post_meta['front_matter'],'content': html_content,}
-            build_page(TEMPLATE_FOR_POST, output_path, page_meta,full_rebuild)
+            build_page(SITE['post']['template'], output_path, page_meta,full_rebuild)
 
 
 def generate_site(full_rebuild=False):

@@ -15,18 +15,30 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # global
 SITE = {
+    'logo': 'Logo',
     'title': 'My Awesome Blog',
     'description': 'A blog about awesome things.',
-    'landing': {
+    'url': 'https://myproductionurl.com',
+    'pages': {
+        'landing': {
         'dir': '',
-        'template': 'landing.html'
-    },
-    'archive': {
-        'dir': '',
-        'template': 'archive.html',
-        'url':'a',
-        'title':'Archive',
-        'description':'Description for archive',
+        'template': 'landing.html',
+        'url':'',
+        },
+        'archive': {
+            'dir': '',
+            'template': 'archive.html',
+            'url':'a',
+            'title':'Archive',
+            'description':'Description for archive',
+        },
+        'about': {
+            'dir': '',
+            'template': 'about.html',
+            'url':'about',
+            'title':'About',
+            'description':'Description for about page',
+        },
     },
     'post': {
         'dir': 'posts',
@@ -38,10 +50,26 @@ SITE = {
     'output': {
         'dir': '_public'
     },
+    'assets': {
+        'dir': 'assets',
+        'dir_css': 'assets/css',
+    },
 }
 
 # init jinja
-env = Environment(loader=FileSystemLoader(SITE['templates']['dir']))
+env = Environment(
+    loader=FileSystemLoader(SITE['templates']['dir']),
+    trim_blocks=True,
+    lstrip_blocks=True
+)
+
+
+def copy_assets():
+    source = SITE['assets']['dir']
+    target = os.path.join(SITE['output']['dir'], SITE['assets']['dir'])
+    if os.path.exists(target):
+        shutil.rmtree(target)
+    shutil.copytree(source, target)
 
 
 def parse_front_matter(file_content):
@@ -128,17 +156,12 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
             file.write(content)
         logging.info(f"Built: {output_path}")
 
- 
-def build_landing(meta, full_rebuild=False):
-    output_path = os.path.join(SITE['output']['dir'], 'index.html')
-    page_meta = {**meta, 'page': SITE['landing']}
-    build_page(SITE['landing']['template'], output_path, page_meta, full_rebuild)
-
-
-def build_archive(meta, full_rebuild=False):
-    output_path = os.path.join(SITE['output']['dir'], SITE['archive']['url'], 'index.html')
-    page_meta = {**meta, 'page': SITE['archive']}
-    build_page(SITE['archive']['template'], output_path, page_meta, full_rebuild)
+  
+def build_pages(meta,full_rebuild=False):
+    for page_key, page in SITE['pages'].items():
+        output_path = os.path.join(SITE['output']['dir'], page.get('url', ''), 'index.html')
+        page_meta = {**meta, 'page': page}
+        build_page(page['template'], output_path, page_meta, full_rebuild)
 
     
 def build_posts(meta, full_rebuild=False):
@@ -165,9 +188,9 @@ def generate_site(full_rebuild=False):
         logging.error(e)
         return
 
-    build_landing(meta, full_rebuild)
-    build_archive(meta, full_rebuild)
+    build_pages(meta, full_rebuild)
     build_posts(meta, full_rebuild)
+    copy_assets()
 
     elapsed_time = time.time() - start_time
     logging.info(f"Done in {elapsed_time:.2f} seconds")
@@ -176,6 +199,11 @@ def generate_site(full_rebuild=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Static Site Generator")
     parser.add_argument("--full", action="store_true", help="Perform a full site rebuild")
+    parser.add_argument("--prod", action="store_true", help="Run in production mode")
     args = parser.parse_args()
+
+    if not args.prod:
+        base_url = 'http://localhost:8000'
+        SITE['url'] = base_url
 
     generate_site(full_rebuild=args.full)

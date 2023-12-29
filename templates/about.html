@@ -1,0 +1,13 @@
+<!-- templates/archive.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Archivesss</h2>
+<ul>
+    {% for post in meta['posts'] %}
+    <li>
+        <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date }}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

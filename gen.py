@@ -20,7 +20,6 @@ SITE_PROPERTIES = {
     # Add more global properties as needed
 }
 
-
 # configurations
 OUTPUT_DIR = '_public'
 POSTS_DIR = 'posts'
@@ -30,9 +29,8 @@ TEMPLATE_FOR_ARCHIVE = 'archive.html'
 TEMPLATE_FOR_LANDING = 'landing.html'
 ARCHIVE_URL = 'a'
 
-# Initialize Jinja environment once and load templates
+# init jinja
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
-post_template = env.get_template(TEMPLATE_FOR_POST)
 
 
 def parse_front_matter(file_content):
@@ -41,7 +39,6 @@ def parse_front_matter(file_content):
     if match:
         front_matter = yaml.safe_load(match.group(1))
         content = match.group(2)
-        # print(front_matter)
         return front_matter, content
     else:
         return {}, file_content
@@ -93,7 +90,7 @@ def get_meta():
     return meta
 
 
-def setup_output_directory(full_rebuild):
+def rebuild(full_rebuild):
     if full_rebuild:
         logging.info(f"Full rebuild: clearing folder {OUTPUT_DIR}...")
         if os.path.exists(OUTPUT_DIR):
@@ -146,7 +143,7 @@ def build_posts(meta, full_rebuild=False):
 def generate_site(full_rebuild=False):
     start_time = time.time()
 
-    setup_output_directory(full_rebuild)
+    rebuild(full_rebuild)
 
     try:
         meta = get_meta()

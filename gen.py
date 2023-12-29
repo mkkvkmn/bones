@@ -129,7 +129,7 @@ def get_meta():
     return meta
 
 
-def rebuild(full_rebuild):
+def clean_or_make_output_dir(full_rebuild):
     output_dir = SITE['output']['dir']
     if full_rebuild:
         logging.info(f"Full rebuild: clearing folder {output_dir}...")
@@ -158,7 +158,7 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
 
   
 def build_pages(meta,full_rebuild=False):
-    for page_key, page in SITE['pages'].items():
+    for key, page in SITE['pages'].items():
         output_path = os.path.join(SITE['output']['dir'], page.get('url', ''), 'index.html')
         page_meta = {**meta, 'page': page}
         build_page(page['template'], output_path, page_meta, full_rebuild)
@@ -180,16 +180,12 @@ def build_posts(meta, full_rebuild=False):
 def generate_site(full_rebuild=False):
     start_time = time.time()
 
-    rebuild(full_rebuild)
+    clean_or_make_output_dir(full_rebuild)
 
-    try:
-        meta = get_meta()
-    except ValueError as e:
-        logging.error(e)
-        return
+    meta = get_meta()
 
     build_pages(meta, full_rebuild)
-    build_posts(meta, full_rebuild)
+    # build_posts(meta, full_rebuild)
     copy_assets()
 
     elapsed_time = time.time() - start_time

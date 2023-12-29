@@ -1,11 +1,14 @@
 <div class="header">
     <div class="logo">
-        <a href="{{ meta['site']['url'] }}">meta['site']['logo']</a>
+        <a href="{{ meta['site']['url'] }}">{{ meta['site']['logo'] }}</a>
     </div>
     <nav class="navigation">
         <ul>
-            <li><a href="{{ meta['site']['url'] }}">Home</a></li>
-            <!-- Add more navigation items here -->
+        {% for key, page in meta['site']['pages'].items() %}
+            {%if page['url']%}
+            <li><a href="{{ meta['site']['url'] }}/{{ page['url'] }}">{{ page['title'] }}</a></li>
+            {%endif%}
+        {% endfor %}
         </ul>
     </nav>
 </div>

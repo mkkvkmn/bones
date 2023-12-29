@@ -1,4 +1,5 @@
 # source venv/bin/activate
+# _public python3 -m http.server
 
 import os
 import re
@@ -9,6 +10,7 @@ import time
 import argparse
 import shutil
 from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
 
 # logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,6 +21,7 @@ SITE = {
     'title': 'My Awesome Blog',
     'description': 'A blog about awesome things.',
     'url': 'https://myproductionurl.com',
+    'copyright': datetime.now().year,
     'pages': {
         'landing': {
         'dir': '',

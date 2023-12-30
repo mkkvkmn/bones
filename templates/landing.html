@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 
+{% block landing_css %}
+    <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/landing.css">
+{% endblock %}
+
 {% block content %}
     <section class="hero">
         <h1>Your Hero Title</h1>
         <p>Your hero description...</p>
+        <p>Your hero description 2 ...</p>
     </section>
 
     <section class="latest-post">
-        <h2>{{ meta['latest_post'].title }}</h2>
-        <p>{{ meta['latest_post'].excerpt }}</p>
-        <a href="{{ url }}">Read More</a>
+        <h2>todo latest post</h2>
+        <h3>{{ meta['latest_post'].title }}</h3>
+        <p class="post-meta">{{ meta['latest_post'].date }} - {{ meta['latest_post'].read_time }} todo read time</p>
+        <p>{{ meta['latest_post'].description }}</p>
+        <a href="{{ url }}">todo Read More</a>
     </section>
 {% endblock %}

@@ -4,11 +4,11 @@
     </div>
     <nav class="navigation">
         <ul>
-        {% for key, page in meta['site']['pages'].items() %}
+            {% for key, page in meta['site']['pages'].items() %}
             {%if page['url']%}
             <li><a href="{{ meta['site']['url'] }}/{{ page['url'] }}">{{ page['title'] }}</a></li>
             {%endif%}
-        {% endfor %}
+            {% endfor %}
         </ul>
     </nav>
 </div>

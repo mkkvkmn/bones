@@ -84,6 +84,14 @@ def parse_front_matter(file_content):
         return front_matter, content
     else:
         return {}, file_content
+    
+
+def calculate_read_time(text):
+    words_per_minute = 200  # Average reading speed
+    words = text.split()
+    word_count = len(words)
+    read_time = round(word_count / words_per_minute)
+    return max(read_time, 1)
 
 
 def get_meta():
@@ -100,7 +108,9 @@ def get_meta():
 
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
+
             front_matter, md_content = parse_front_matter(file_content)
+            read_time = calculate_read_time(md_content)
 
             url = front_matter.get('url').strip('/')
             if not url:
@@ -111,12 +121,13 @@ def get_meta():
 
             posts_meta.append({
                 'title': front_matter.get('title', ''),
-                'excerpt': front_matter.get('excerpt', ''),
+                'description': front_matter.get('description', ''),
                 'date': front_matter.get('date', ''),
                 'url': url,
                 'filename': md_file.name,
                 'front_matter':front_matter,
-                'content': md_content
+                'content': md_content,
+                'read_time': read_time
             })
 
     latest_post = max(posts_meta, key=lambda x: x['date'])

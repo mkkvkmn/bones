@@ -1,0 +1,30 @@
+/* header */
+.header {
+    text-transform: uppercase;
+}
+
+.logo a {
+    text-decoration: none;
+    margin-right: 20px;
+}
+
+.navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-self: flex-end;
+    display: flex;
+}
+
+.navigation ul li {
+    margin-right: 10px;
+}
+
+.navigation ul li a {
+    text-decoration: none;
+}
+
+.navigation ul li a:hover {
+    color: var(--other);
+}
+/* end header */

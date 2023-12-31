@@ -3,18 +3,21 @@
 <head>
     {% include 'head.html' %}
     {% block landing_css -%}{% endblock -%}
+    {% block archive_css -%}{% endblock -%}
 </head>
 <body>
+    <div class="content">
     {% include 'header.html' %}
 
     <main>
-        <div class="content">
+        
         {% block content %}
         <!-- Main content will be overridden in other templates -->
         {% endblock %}
-        </div>
+        
     </main>
 
     {% include 'footer.html' %}
+    </div>
 </body>
 </html>

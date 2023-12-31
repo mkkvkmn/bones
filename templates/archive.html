@@ -1,12 +1,16 @@
 <!-- templates/archive.html -->
 {% extends "base.html" %}
 
+{% block archive_css %}
+    <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/archive.css">
+{% endblock %}
+
 {% block content %}
 <h2>Archivesss</h2>
 <ul>
     {% for post in meta['posts'] %}
     <li>
-        <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date }}
+        <a class="no-decoration" href="{{ post.url }}">{{ post.title }}</a> - {{ post.date }}
     </li>
     {% endfor %}
 </ul>

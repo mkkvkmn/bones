@@ -16,9 +16,9 @@
 
 @font-face {
     font-family: 'Work Sans';
-    src: url('/assets/fonts/work-sans-v19-latin-700.woff2') format('woff2'),
-         url('/assets/fonts/work-sans-v19-latin-700.woff') format('woff');
-    font-weight: 700;
+    src: url('/assets/fonts/work-sans-v19-latin-900.woff2') format('woff2'),
+         url('/assets/fonts/work-sans-v19-latin-900.woff') format('woff');
+    font-weight: 900;
     font-style: normal;
 }
 
@@ -36,34 +36,24 @@ body {
     font-family: 'Work Sans', sans-serif;
     color: var(--light);
     background-color: var(--dark);
-    font-size: 16px;
-    padding: 20px;
+    font-size: 20px;
+    line-height: 1.5;
+    padding: 5px;
 }
 
 main {
-    margin: 20px 0;
+    margin: 20px 0 40px 0;
 }
 
 .content {
-    max-width: 98%;
-
-    @media only screen and (min-width: var(--s)) {
-        max-width: 480px;
-    }
-
-    @media only screen and (min-width: var(--m)) {
-        max-width: 560px;
-    }
-
-    @media only screen and (min-width: var(--l)) {
-        max-width: 740px;
-    }
+    max-width: 99%;
+    margin:auto;
 }
 
 /* typography */
 h1, h2, h3 {
     font-family: 'Work Sans', sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     text-transform: uppercase;
 }
 
@@ -99,4 +89,39 @@ a {
     width: 1px;
     word-wrap: normal !important;
 }
+
+.no-decoration {
+    text-decoration: none;
+}
 /* end layout etc */
+
+@media only screen and (min-width: 576px) {
+    body {
+        padding: 10px;
+    }
+
+    .content {
+        max-width: 97%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    body {
+        font-size: 22px;
+        padding: 15px;
+    }
+
+    .content {
+        max-width: 92%;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    body {
+        padding: 20px;
+    }
+
+    .content {
+        max-width: 970px;
+    }
+}

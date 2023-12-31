@@ -7,15 +7,15 @@
 {% block content %}
     <section class="hero">
         <h1>Your Hero Title</h1>
-        <p>Your hero description...</p>
-        <p>Your hero description 2 ...</p>
+        <p>todo Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim libero turpis, eget commodo purus condimentum et. </p>
+        <p>todo Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim libero turpis, eget commodo purus condimentum et. </p>
     </section>
 
     <section class="latest-post">
         <h2>todo latest post</h2>
-        <h3>{{ meta['latest_post'].title }}</h3>
+        <h3><a href="{{ meta['latest_post'].url }}">{{ meta['latest_post'].title }}</a></h3>
         <p class="post-meta">{{ meta['latest_post'].date }} - {{ meta['latest_post'].read_time }} todo read time</p>
         <p>{{ meta['latest_post'].description }}</p>
-        <a href="{{ url }}">todo Read More</a>
+        <a href="{{ meta['latest_post'].url }}">todo Read More</a>
     </section>
 {% endblock %}

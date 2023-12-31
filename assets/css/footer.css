@@ -1,37 +1,62 @@
 /* footer */
+footer {
+    padding: 20px 0;
+    border-top: 1px solid white;
+}
+
 .footer {
     display: flex;
     flex-direction: column;
     font-size: 0.9em;
 }
 
+footer .row{
+    justify-content: space-between;
+}
+
 .footer-disclaimer {
-    min-width: 200px
+    width: 95%;
+    max-width: 450px;
+}
+
+.footer-subscribe {
+    width: 95%;
+    max-width: 400px;
 }
 
 .footer-subscribe form {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
 .footer-subscribe input[type="email"] {
     margin-right: 10px;
     padding: 5px;
-    border: 1px solid #ddd;
     border-radius: 4px;
+    background-color: var(--dark);
+    border: none;
 }
 
 .footer-subscribe button {
-    background-color: var(--light);
+    background-color: white;
     color: var(--dark);
     border: none;
-    padding: 5px 10px;
+    padding: 0px 10px;
     border-radius: 4px;
     cursor: pointer;
+    height: 40px;
+    font-weight: 700;
 }
 
 .footer-subscribe button:hover {
     background-color: var(--other);
+}
+
+.form-wrapper {
+    border: 1px solid #414141;
+    padding: 8px;
+    border-radius: 5px;
+    width: 100%;
 }
 /* end footer */

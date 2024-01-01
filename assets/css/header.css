@@ -1,6 +1,7 @@
 /* header */
 .header {
     text-transform: uppercase;
+    padding: 20px 0px;
 }
 
 .header.row {

@@ -32,25 +32,25 @@
     --u: 1rem;
 }
 
+html {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Work Sans', sans-serif;
     color: var(--light);
     background-color: var(--dark);
     font-size: 20px;
     line-height: 1.5;
-    padding: 5px;
+    margin: 0;
+    padding: 0;
 }
 
 main {
     margin: 20px 0 40px 0;
 }
 
-.content {
-    max-width: 99%;
-    margin:auto;
-}
-
-/* typography */
 h1, h2, h3 {
     font-family: 'Work Sans', sans-serif;
     font-weight: 900;
@@ -65,10 +65,20 @@ em, i {
 a {
     color: white;
 }
-/* end typography */
 
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border: none;
+}
 
-/* layout etc */
+.content {
+    max-width: 100%;
+    margin: auto;
+    padding: 0 20px;
+}
+
 .row {
     display: flex;
     flex-wrap: wrap;
@@ -93,35 +103,25 @@ a {
 .no-decoration {
     text-decoration: none;
 }
-/* end layout etc */
+
+.full {
+    width: 100%;
+}
 
 @media only screen and (min-width: 576px) {
-    body {
-        padding: 10px;
-    }
-
     .content {
-        max-width: 97%;
+        max-width: 540px; /* Adjust as needed */
     }
 }
 
 @media only screen and (min-width: 768px) {
-    body {
-        font-size: 22px;
-        padding: 15px;
-    }
-
     .content {
-        max-width: 92%;
+        max-width: 720px; /* Adjust as needed */
     }
 }
 
 @media only screen and (min-width: 1024px) {
-    body {
-        padding: 20px;
-    }
-
     .content {
-        max-width: 970px;
+        max-width: 960px; /* Adjust as needed */
     }
 }

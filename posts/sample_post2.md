@@ -5,9 +5,10 @@ description: >
     This is going to say something
     that is multiline
 url: sample2
+img: 'sample2/sample2.jpg'
 ---
 
-# Welcome to Bones
+Welcome to Bones
 
 Welcome to my second post using **Bones**, the minimalist static site generator!
 

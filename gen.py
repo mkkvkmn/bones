@@ -22,6 +22,7 @@ SITE = {
     'description': 'A blog about awesome things.',
     'url': 'https://myproductionurl.com',
     'copyright': datetime.now().year,
+    'default_img': 'default.jpg',
     'pages': {
         'landing': {
         'dir': '',
@@ -56,6 +57,7 @@ SITE = {
     'assets': {
         'dir': 'assets',
         'dir_css': 'assets/css',
+        'dir_img': 'assets/img',
     },
 }
 
@@ -87,7 +89,7 @@ def parse_front_matter(file_content):
     
 
 def calculate_read_time(text):
-    words_per_minute = 200  # Average reading speed
+    words_per_minute = 200
     words = text.split()
     word_count = len(words)
     read_time = round(word_count / words_per_minute)
@@ -127,10 +129,13 @@ def get_meta():
                 'filename': md_file.name,
                 'front_matter':front_matter,
                 'content': md_content,
-                'read_time': read_time
+                'read_time': read_time,
+                'img': front_matter.get('img', '')
             })
 
     latest_post = max(posts_meta, key=lambda x: x['date'])
+
+    posts_meta.sort(key=lambda x: x['date'], reverse=True) # sort reverse for archive
 
     meta = {
         'last_post_mod_time':last_post_mod_time,
@@ -199,7 +204,7 @@ def generate_site(full_rebuild=False):
     meta = get_meta()
 
     build_pages(meta, full_rebuild)
-    # build_posts(meta, full_rebuild)
+    build_posts(meta, full_rebuild)
     copy_assets()
 
     elapsed_time = time.time() - start_time

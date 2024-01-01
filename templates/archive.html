@@ -10,7 +10,7 @@
 <ul>
     {% for post in meta['posts'] %}
     <li>
-        <a class="no-decoration" href="{{ post.url }}">{{ post.title }}</a> - {{ post.date }}
+        <a class="no-decoration" href="{{ meta['site'].url }}/{{ post.url }}">{{ post.title }}</a>
     </li>
     {% endfor %}
 </ul>

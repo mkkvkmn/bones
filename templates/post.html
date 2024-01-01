@@ -1,11 +1,24 @@
 {% extends "base.html" %}
 
+{% block post_css %}
+    <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/post.css">
+{% endblock %}
+
 {% block content %}
     <article>
-        <h2>{{ meta['post'].title }}</h2>
-        <p>Published on: {{ meta['post'].date }}</p>
+        <div class="row full">
+            <div class="post-image full">
+                {% if meta['post'].img %}
+                <img src="/{{ meta['site']['assets']['dir_img']}}/{{meta['post'].img}}" alt="{{meta['post'].title}}">
+                {% else %}
+                <img src="/{{ meta['site']['assets']['dir_img']}}/{{meta['site'].default_img}}" alt="{{meta['post'].title}}">
+                {% endif %}
+            </div>
+        </div>
+        <h1>{{ meta['post'].title }}</h1>
+        <p class="post-meta">{{ meta['post'].date.strftime('%d.%m.%Y') }} - {{ meta['post'].read_time }} todo read time</p>
         <div>
-            {{ meta['post'].content | safe }}
+            {{ meta['content'] | safe }}
         </div>
     </article>
 {% endblock %}

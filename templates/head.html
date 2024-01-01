@@ -1,6 +1,6 @@
 {% block head %}
 {% import 'macros.html' as m %}
-{% set title = m.set_title(meta) %}{% set description = m.set_description(meta) %}{% set url = m.set_url(meta) %}
+{% set title = m.set_title(meta) %}{% set description = m.set_description(meta) %}{% set url = m.set_url(meta) %}{% set img = m.set_img(meta) %}
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}">
@@ -11,13 +11,13 @@
     <meta property="og:url" content="{{ url }}">
     <meta property="og:title" content="{{ title }}">
     <meta property="og:description" content="{{ description }}">
-    <meta property="og:image" content="{{ image }}">
+    <meta property="og:image" content="{{ img }}">
 
-    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:card" content="{{ description }}">
     <meta property="twitter:url" content="{{ url }}">
     <meta property="twitter:title" content="{{ title }}">
     <meta property="twitter:description" content="{{ description }}">
-    <meta property="twitter:image" content="{{ image }}">
+    <meta property="twitter:image" content="{{ img }}">
 
     <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/base.css">
     <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/header.css">

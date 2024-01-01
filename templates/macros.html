@@ -28,3 +28,13 @@
     {% endif %}
     {{- url -}}
 {% endmacro %}
+
+{% macro set_img(meta) %}
+    {% set img = meta['site']['url'] ~ '/' ~ meta['site']['assets']['dir_img'] ~ '/' ~ meta['site']['default_img'] ~ '/' %}
+    {% if meta['post'] and meta['post']['img'] %}
+        {% set img = meta['site']['url'] ~ '/' ~ meta['site']['assets']['dir_img'] ~ '/' ~ meta['post']['img'] ~ '/' %}
+    {% elif meta['page'] and meta['page']['img'] %}
+        {% set img = meta['site']['url'] ~ '/' ~ meta['site']['assets']['dir_img'] ~ '/' ~ meta['page']['img'] ~ '/' %}
+    {% endif %}
+    {{- img -}}
+{% endmacro %}

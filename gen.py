@@ -1,6 +1,3 @@
-# source venv/bin/activate
-# _public python3 -m http.server
-
 import os
 import re
 import markdown

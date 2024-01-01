@@ -1,26 +1,43 @@
 <!-- templates/archive.html -->
-{% extends "base.html" %} {% block content %}
-<h2>About</h2>
-<p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-  libero turpis, eget commodo purus condimentum et. Duis feugiat urna et ipsum
-  tempus euismod. Nulla vulputate ultrices eros, ac molestie velit mollis eget.
-  Nulla sed augue nec risus tempor ornare. Fusce condimentum, sapien vel
-  condimentum ultrices, nunc arcu cursus nibh, id venenatis turpis nulla ac
-  tortor. Duis blandit placerat diam a bibendum. Maecenas euismod urna et
-  pretium sollicitudin. In quis vestibulum massa, vel fermentum dui. Etiam
-  ullamcorper orci et turpis ultricies porta. Class aptent taciti sociosqu ad
-  litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque
-  faucibus dui eu condimentum egestas. In nec arcu semper, mattis augue eget,
-  tincidunt ante. Integer ac ante et metus dapibus pharetra.
-</p>
-<p>
-  Fusce orci nulla, posuere a metus vitae, ultrices vehicula risus. Nulla
-  lacinia, ligula nec tincidunt ultrices, nibh lectus mattis justo, eget
-  condimentum quam urna et orci. Cras venenatis, purus nec sagittis vestibulum,
-  est lorem euismod tortor, ac lobortis justo nunc id ipsum. Nunc non ipsum
-  nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi leo
-  nisl, pellentesque dapibus risus sit amet, vulputate eleifend eros. In egestas
-  sodales neque vitae viverra. Donec vitae porttitor ante.
-</p>
+{% extends "base.html" %}
+
+{% block post_css %}
+    <link rel="stylesheet" href="/{{ meta['site']['assets']['dir_css'] }}/post.css">
+{% endblock %}
+
+{% block content %}
+<article>
+    {% if meta['page'].img %}
+    <div class="row full">
+        <div class="post-image full">
+            <img src="/{{ meta['site']['assets']['dir_img']}}/{{meta['page'].img}}" alt="{{meta['page'].title}}">
+        </div>
+    </div>
+    {% endif %}
+    <h1>{{ meta['page'].title }}</h1>
+    <div>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
+            libero turpis, eget commodo purus condimentum et. Duis feugiat urna et ipsum
+            tempus euismod. Nulla vulputate ultrices eros, ac molestie velit mollis eget.
+            Nulla sed augue nec risus tempor ornare. Fusce condimentum, sapien vel
+            condimentum ultrices, nunc arcu cursus nibh, id venenatis turpis nulla ac
+            tortor. Duis blandit placerat diam a bibendum. Maecenas euismod urna et
+            pretium sollicitudin. In quis vestibulum massa, vel fermentum dui. Etiam
+            ullamcorper orci et turpis ultricies porta. Class aptent taciti sociosqu ad
+            litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque
+            faucibus dui eu condimentum egestas. In nec arcu semper, mattis augue eget,
+            tincidunt ante. Integer ac ante et metus dapibus pharetra.
+          </p>
+          <p>
+            Fusce orci nulla, posuere a metus vitae, ultrices vehicula risus. Nulla
+            lacinia, ligula nec tincidunt ultrices, nibh lectus mattis justo, eget
+            condimentum quam urna et orci. Cras venenatis, purus nec sagittis vestibulum,
+            est lorem euismod tortor, ac lobortis justo nunc id ipsum. Nunc non ipsum
+            nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi leo
+            nisl, pellentesque dapibus risus sit amet, vulputate eleifend eros. In egestas
+            sodales neque vitae viverra. Donec vitae porttitor ante.
+          </p>
+    </div>
+</article>
 {% endblock %}

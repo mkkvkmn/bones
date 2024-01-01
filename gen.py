@@ -42,6 +42,7 @@ SITE = {
             'url':'about',
             'title':'About',
             'description':'Description for about page',
+            'img': 'default.jpg',
         },
     },
     'post': {

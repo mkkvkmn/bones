@@ -125,15 +125,31 @@ def get_meta():
                 'date': front_matter.get('date', ''),
                 'url': url,
                 'filename': md_file.name,
-                'front_matter':front_matter,
-                'content': md_content,
+                'content_md': md_content,
                 'read_time': read_time,
                 'img': front_matter.get('img', '')
             })
 
     latest_post = max(posts_meta, key=lambda x: x['date'])
 
-    posts_meta.sort(key=lambda x: x['date'], reverse=True) # sort reverse for archive
+    for i, post in enumerate(posts_meta):
+        # prev
+        if i > 0:
+            post['prev_post'] = {
+                'title': posts_meta[i - 1]['title'],
+                'url': posts_meta[i - 1]['url']
+            }
+        else:
+            post['prev_post'] = None
+
+        # next
+        if i < len(posts_meta) - 1:
+            post['next_post'] = {
+                'title': posts_meta[i + 1]['title'],
+                'url': posts_meta[i + 1]['url']
+            }
+        else:
+            post['next_post'] = None
 
     meta = {
         'last_post_mod_time':last_post_mod_time,
@@ -189,8 +205,8 @@ def build_posts(meta, full_rebuild=False):
         output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
 
         if os.path.exists(source_path) and source_mod_time > output_mod_time:
-            html_content = markdown.markdown((post_meta['content']))
-            page_meta = {**meta, 'post': post_meta['front_matter'],'content': html_content,}
+            html_content = markdown.markdown((post_meta['content_md']))
+            page_meta = {**meta, 'post': post_meta,'content': html_content}
             build_page(SITE['post']['template'], output_path, page_meta,full_rebuild)
 
 

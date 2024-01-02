@@ -20,5 +20,17 @@
         <div>
             {{ meta['content'] | safe }}
         </div>
+        <div class="post-nav">
+            <div>
+            {% if meta['post'].prev_post %}
+                <a href="{{ meta.site.url }}/{{ meta['post'].prev_post.url }}"><< {{ meta['post'].prev_post.title }}</a>
+            {% endif %}
+            </div>
+            <div>
+            {% if meta['post'].next_post %}
+                <a href="{{ meta.site.url }}/{{ meta['post'].next_post.url }}">{{ meta['post'].next_post.title }} >></a>
+            {% endif %}
+            </div>
+        </div>
     </article>
 {% endblock %}

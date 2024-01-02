@@ -33,6 +33,11 @@ article p.post-meta {
   height: 250px;
   margin-bottom: 20px;
 }
+
+.post-nav {
+    display: flex;
+    justify-content: space-between;
+}
   
 @media only screen and (min-width: 576px) {
     .post-image {

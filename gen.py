@@ -22,9 +22,9 @@ SITE = {
     'default_img': 'default.jpg',
     'pages': {
         'landing': {
-        'dir': '',
-        'template': 'landing.html',
-        'url':'',
+            'dir': '',
+            'template': 'landing.html',
+            'url':'',
         },
         'archive': {
             'dir': '',
@@ -40,6 +40,14 @@ SITE = {
             'title':'About',
             'description':'Description for about page',
             'img': 'default.jpg',
+        },
+        '404': {
+            'dir': '',
+            'template': '404.html',
+            'url':'',
+            'title':'Sorry! Page Not Found.',
+            'description':'404',
+            'output_file':'404.html',
         },
     },
     'post': {
@@ -192,7 +200,7 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
   
 def build_pages(meta,full_rebuild=False):
     for key, page in SITE['pages'].items():
-        output_path = os.path.join(SITE['output']['dir'], page.get('url', ''), 'index.html')
+        output_path = os.path.join(SITE['output']['dir'], page.get('url', ''), page.get('output_file', 'index.html'))
         page_meta = {**meta, 'page': page}
         build_page(page['template'], output_path, page_meta, full_rebuild)
 

@@ -83,6 +83,7 @@ SITE = {
         'dir': 'assets',
         'dir_css': 'assets/css',
         'dir_img': 'assets/img',
+        'dir_favicon': 'assets/favicon',
     },
 }
 
@@ -121,22 +122,18 @@ def calculate_read_time(text):
     return max(read_time, 1)
 
 
-def get_meta():
+def assign_prev_next_posts(posts_meta):
+    for i, post_meta in enumerate(posts_meta):
+        post_meta['prev_post'] = posts_meta[i - 1] if i > 0 else None
+        post_meta['next_post'] = posts_meta[i + 1] if i < len(posts_meta) - 1 else None
+
+
+def get_posts_meta():
     posts_meta = []
     url_set = set()
-    last_post_mod_time = 0
-
-    last_build_file_mod_time = max(
-        os.path.getmtime(f.path) for f in chain(
-            os.scandir(SITE['templates']['dir']), 
-            os.scandir(SITE['assets']['dir_css'])
-        ) if f.is_file()
-    )
 
     for md_file in os.scandir(SITE['post']['dir']):
         if md_file.name.endswith('.md'):
-            post_mod_time = os.path.getmtime(md_file.path)
-            last_post_mod_time = max(last_post_mod_time, post_mod_time)
 
             with open(md_file.path, 'r') as file:
                 file_content = file.read()
@@ -155,6 +152,8 @@ def get_meta():
             date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S %z')
             formatted_date = email.utils.formatdate(date_obj.timestamp())
 
+            post_mod_time = os.path.getmtime(md_file.path)
+
             posts_meta.append({
                 'title': front_matter.get('title', ''),
                 'description': front_matter.get('description', ''),
@@ -164,40 +163,33 @@ def get_meta():
                 'filename': md_file.name,
                 'content_md': md_content,
                 'read_time': read_time,
-                'img': front_matter.get('img', '')
+                'img': front_matter.get('img', ''),
+                'mod_time': post_mod_time
             })
 
+    return posts_meta
+
+def get_meta():
+    posts_meta = get_posts_meta()
     latest_post = max(posts_meta, key=lambda x: x['date'])
+    last_post_mod_time = max(os.path.getmtime(f.path) for f in os.scandir(SITE['post']['dir']) if f.is_file())
+    last_template_mod_time = max(
+        os.path.getmtime(f.path) for f in chain(
+            os.scandir(SITE['templates']['dir']), 
+            os.scandir(SITE['assets']['dir_css'])
+        ) if f.is_file()
+    )
 
-    for i, post in enumerate(posts_meta):
-        # prev
-        if i > 0:
-            post['prev_post'] = {
-                'title': posts_meta[i - 1]['title'],
-                'url': posts_meta[i - 1]['url']
-            }
-        else:
-            post['prev_post'] = None
+    assign_prev_next_posts(posts_meta)
 
-        # next
-        if i < len(posts_meta) - 1:
-            post['next_post'] = {
-                'title': posts_meta[i + 1]['title'],
-                'url': posts_meta[i + 1]['url']
-            }
-        else:
-            post['next_post'] = None
-
-    meta = {
+    return {
         'last_post_mod_time':last_post_mod_time,
-        'last_build_file_mod_time':last_build_file_mod_time,
+        'last_template_mod_time':last_template_mod_time,
         'last_build_date': latest_post['date_xml'],
         'posts':posts_meta,
         'latest_post':latest_post,
         'site':SITE,
     }
-
-    return meta
 
 
 def clean_or_make_output_dir(full_rebuild):
@@ -214,17 +206,19 @@ def clean_or_make_output_dir(full_rebuild):
 def build_page(template_name, source_path, output_path, meta, full_rebuild=False):
     source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
     output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
-    
+
+    # all need rebuild, if template modified, file doesn't exist or full rebuild
     needs_rebuild = (
         full_rebuild or 
         not os.path.exists(output_path) or 
-        # landing need rebuild if new post
-        os.path.getmtime(output_path) < meta['last_post_mod_time'] or
-        # everything needs rebuild, if templates modified
-        os.path.getmtime(output_path) < meta['last_build_file_mod_time'] or
-        # source newer than output 
-        source_mod_time > output_mod_time 
+        os.path.getmtime(output_path) < meta['last_template_mod_time']
     )
+    
+    if SITE['post']['dir'] in  source_path:
+        needs_rebuild = needs_rebuild or source_mod_time > output_mod_time 
+    else:
+        # landing, feed, sitemap needs rebuild if new post
+        needs_rebuild = needs_rebuild or os.path.getmtime(output_path) < meta['last_post_mod_time']
 
     if needs_rebuild:
         template = env.get_template(template_name)
@@ -262,6 +256,7 @@ def build_sitemap(meta, full_rebuild=False):
     source_path = os.path.join(SITE['templates']['dir'], SITE['sitemap']['template'])
     output_path = os.path.join(SITE['output']['dir'], SITE['sitemap']['output_file'])
     build_page(SITE['sitemap']['template'], source_path, output_path, meta, full_rebuild)
+
 
 def build_robotstxt(meta, full_rebuild=False):
     source_path = os.path.join(SITE['templates']['dir'], SITE['robots']['template'])

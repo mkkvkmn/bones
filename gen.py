@@ -63,6 +63,16 @@ SITE = {
         'template': 'feed.xml',
         'output_file':'feed.xml',
     },
+    'sitemap': {
+        'dir': '',
+        'template': 'sitemap.xml',
+        'output_file':'sitemap.xml',
+    },
+    'robots': {
+        'dir': '',
+        'template': 'robots.txt',
+        'output_file':'robots.txt',
+    },
     'templates': {
         'dir': 'templates'
     },
@@ -208,9 +218,12 @@ def build_page(template_name, source_path, output_path, meta, full_rebuild=False
     needs_rebuild = (
         full_rebuild or 
         not os.path.exists(output_path) or 
-        os.path.getmtime(output_path) < meta['last_post_mod_time'] or # landing need rebuild if new post
-        os.path.getmtime(output_path) < meta['last_build_file_mod_time'] or # everything needs rebuild, if templates modified
-        source_mod_time > output_mod_time # source newer than output
+        # landing need rebuild if new post
+        os.path.getmtime(output_path) < meta['last_post_mod_time'] or
+        # everything needs rebuild, if templates modified
+        os.path.getmtime(output_path) < meta['last_build_file_mod_time'] or
+        # source newer than output 
+        source_mod_time > output_mod_time 
     )
 
     if needs_rebuild:
@@ -245,6 +258,17 @@ def build_feed(meta, full_rebuild=False):
     build_page(SITE['feed']['template'], source_path, output_path, meta, full_rebuild)
 
 
+def build_sitemap(meta, full_rebuild=False):
+    source_path = os.path.join(SITE['templates']['dir'], SITE['sitemap']['template'])
+    output_path = os.path.join(SITE['output']['dir'], SITE['sitemap']['output_file'])
+    build_page(SITE['sitemap']['template'], source_path, output_path, meta, full_rebuild)
+
+def build_robotstxt(meta, full_rebuild=False):
+    source_path = os.path.join(SITE['templates']['dir'], SITE['robots']['template'])
+    output_path = os.path.join(SITE['output']['dir'], SITE['robots']['output_file'])
+    build_page(SITE['robots']['template'], source_path, output_path, meta, full_rebuild)
+
+
 def generate_site(full_rebuild=False):
     start_time = time.time()
 
@@ -254,7 +278,9 @@ def generate_site(full_rebuild=False):
 
     build_pages(meta, full_rebuild)
     build_posts(meta, full_rebuild)
-    build_feed(meta)
+    build_feed(meta, full_rebuild)
+    build_sitemap(meta, full_rebuild)
+    build_robotstxt(meta, full_rebuild)
     copy_assets()
 
     elapsed_time = time.time() - start_time

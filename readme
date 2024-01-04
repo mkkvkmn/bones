@@ -15,8 +15,8 @@ source venv/bin/activate
 
 ## Run
 python3 gen.py 
-- --full -> regenerate from scratch
-- --prod -> use prod url
+- --full -> regenerate everything
+- --dev -> use dev url
 
 ### Server
 in _public run: python3 -m http.server

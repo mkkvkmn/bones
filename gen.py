@@ -6,9 +6,10 @@ import logging
 import time
 import argparse
 import shutil
+import email.utils
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
-import email.utils
+from itertools import chain
 
 # logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -115,7 +116,12 @@ def get_meta():
     url_set = set()
     last_post_mod_time = 0
 
-    last_template_mod_time = max(os.path.getmtime(f.path) for f in os.scandir(SITE['templates']['dir']) if f.is_file())
+    last_build_file_mod_time = max(
+        os.path.getmtime(f.path) for f in chain(
+            os.scandir(SITE['templates']['dir']), 
+            os.scandir(SITE['assets']['dir_css'])
+        ) if f.is_file()
+    )
 
     for md_file in os.scandir(SITE['post']['dir']):
         if md_file.name.endswith('.md'):
@@ -174,7 +180,7 @@ def get_meta():
 
     meta = {
         'last_post_mod_time':last_post_mod_time,
-        'last_template_mod_time':last_template_mod_time,
+        'last_build_file_mod_time':last_build_file_mod_time,
         'last_build_date': latest_post['date_xml'],
         'posts':posts_meta,
         'latest_post':latest_post,
@@ -200,7 +206,7 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
         full_rebuild or 
         not os.path.exists(output_path) or 
         os.path.getmtime(output_path) < meta['last_post_mod_time'] or 
-        os.path.getmtime(output_path) < meta['last_template_mod_time']
+        os.path.getmtime(output_path) < meta['last_build_file_mod_time']
     )
 
     if needs_rebuild:
@@ -226,7 +232,7 @@ def build_posts(meta, full_rebuild=False):
         source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
         output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
 
-        if os.path.exists(source_path) and source_mod_time > output_mod_time:
+        if os.path.exists(source_path) and source_mod_time > output_mod_time or meta['last_build_file_mod_time'] > output_mod_time:
             html_content = markdown.markdown((post_meta['content_md']))
             page_meta = {**meta, 'post': post_meta,'content': html_content}
             build_page(SITE['post']['template'], output_path, page_meta, full_rebuild)
@@ -256,10 +262,10 @@ def generate_site(full_rebuild=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Static Site Generator")
     parser.add_argument("--full", action="store_true", help="Perform a full site rebuild")
-    parser.add_argument("--prod", action="store_true", help="Run in production mode")
+    parser.add_argument("--dev", action="store_true", help="Run in production mode")
     args = parser.parse_args()
 
-    if not args.prod:
+    if args.dev:
         base_url = 'http://localhost:8000'
         SITE['url'] = base_url
 

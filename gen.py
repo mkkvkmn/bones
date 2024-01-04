@@ -182,6 +182,8 @@ def get_meta():
 
     assign_prev_next_posts(posts_meta)
 
+    posts_meta.sort(key=lambda x: x['date'], reverse=True) # sort reverse for archive
+
     return {
         'last_post_mod_time':last_post_mod_time,
         'last_template_mod_time':last_template_mod_time,

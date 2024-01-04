@@ -201,12 +201,16 @@ def clean_or_make_output_dir(full_rebuild):
         os.makedirs(output_dir)
 
 
-def build_page(template_name, output_path, meta, full_rebuild=False):
+def build_page(template_name, source_path, output_path, meta, full_rebuild=False):
+    source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
+    output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
+    
     needs_rebuild = (
         full_rebuild or 
         not os.path.exists(output_path) or 
-        os.path.getmtime(output_path) < meta['last_post_mod_time'] or 
-        os.path.getmtime(output_path) < meta['last_build_file_mod_time']
+        os.path.getmtime(output_path) < meta['last_post_mod_time'] or # landing need rebuild if new post
+        os.path.getmtime(output_path) < meta['last_build_file_mod_time'] or # everything needs rebuild, if templates modified
+        source_mod_time > output_mod_time # source newer than output
     )
 
     if needs_rebuild:
@@ -220,27 +224,25 @@ def build_page(template_name, output_path, meta, full_rebuild=False):
   
 def build_pages(meta,full_rebuild=False):
     for key, page in SITE['pages'].items():
+        source_path = os.path.join(SITE['templates']['dir'], page['template'])
         output_path = os.path.join(SITE['output']['dir'], page.get('url', ''), page.get('output_file', 'index.html'))
         page_meta = {**meta, 'page': page}
-        build_page(page['template'], output_path, page_meta, full_rebuild)
+        build_page(page['template'], source_path, output_path, page_meta, full_rebuild)
 
     
 def build_posts(meta, full_rebuild=False):
     for post_meta in meta['posts']:
         source_path = os.path.join(SITE['post']['dir'], post_meta['filename'])
         output_path = os.path.join(SITE['output']['dir'], post_meta['url'], 'index.html')
-        source_mod_time = os.path.getmtime(source_path) if os.path.exists(source_path) else 0
-        output_mod_time = os.path.getmtime(output_path) if os.path.exists(output_path) else 0
-
-        if os.path.exists(source_path) and source_mod_time > output_mod_time or meta['last_build_file_mod_time'] > output_mod_time:
-            html_content = markdown.markdown((post_meta['content_md']))
-            page_meta = {**meta, 'post': post_meta,'content': html_content}
-            build_page(SITE['post']['template'], output_path, page_meta, full_rebuild)
+        html_content = markdown.markdown((post_meta['content_md']))
+        page_meta = {**meta, 'post': post_meta,'content': html_content}
+        build_page(SITE['post']['template'], source_path, output_path, page_meta, full_rebuild)
 
 
 def build_feed(meta, full_rebuild=False):
+    source_path = os.path.join(SITE['templates']['dir'], SITE['feed']['template'])
     output_path = os.path.join(SITE['output']['dir'], SITE['feed']['output_file'])
-    build_page(SITE['feed']['template'], output_path, meta, full_rebuild)
+    build_page(SITE['feed']['template'], source_path, output_path, meta, full_rebuild)
 
 
 def generate_site(full_rebuild=False):

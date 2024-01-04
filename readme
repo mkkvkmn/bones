@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ## Venv - optional
 pip install virtualenv
-python3 -m venv myenv
+python3 -m venv venv
 source venv/bin/activate
 
 ## Run

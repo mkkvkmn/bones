@@ -19,4 +19,4 @@ python3 gen.py
 - --prod -> use prod url
 
 ### Server
-_public python3 -m http.server
+in _public run: python3 -m http.server

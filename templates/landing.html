@@ -14,7 +14,7 @@
     <section class="latest-post">
         <h2>todo latest post</h2>
         <h3><a href="{{ meta['latest_post'].url }}">{{ meta['latest_post'].title }}</a></h3>
-        <p class="post-meta">{{ meta['latest_post'].date }} - {{ meta['latest_post'].read_time }} todo read time</p>
+        <p class="post-meta">{{ meta['latest_post'].date.strftime('%d.%m.%Y') }} - {{ meta['latest_post'].read_time }} todo read time</p>
         <p>{{ meta['latest_post'].description }}</p>
         <a href="{{ meta['latest_post'].url }}">todo Read More</a>
     </section>

@@ -8,6 +8,7 @@ import argparse
 import shutil
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
+import email.utils
 
 # logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,6 +21,8 @@ SITE = {
     'url': 'https://myproductionurl.com',
     'copyright': datetime.now().year,
     'default_img': 'default.jpg',
+    'lang_html': 'fi',
+    'lang_xml': 'fi-fi',
     'pages': {
         'landing': {
             'dir': '',
@@ -53,6 +56,11 @@ SITE = {
     'post': {
         'dir': 'posts',
         'template': 'post.html'
+    },
+    'feed': {
+        'dir': '',
+        'template': 'feed.xml',
+        'output_file':'feed.xml',
     },
     'templates': {
         'dir': 'templates'
@@ -127,10 +135,15 @@ def get_meta():
                 raise ValueError(f"Duplicate URL '{url}' found in {md_file.name}")
             url_set.add(url)
 
+            date_str = front_matter.get('date', '')
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S %z')
+            formatted_date = email.utils.formatdate(date_obj.timestamp())
+
             posts_meta.append({
                 'title': front_matter.get('title', ''),
                 'description': front_matter.get('description', ''),
-                'date': front_matter.get('date', ''),
+                'date': date_obj,
+                'date_xml': formatted_date,
                 'url': url,
                 'filename': md_file.name,
                 'content_md': md_content,
@@ -162,6 +175,7 @@ def get_meta():
     meta = {
         'last_post_mod_time':last_post_mod_time,
         'last_template_mod_time':last_template_mod_time,
+        'last_build_date': latest_post['date_xml'],
         'posts':posts_meta,
         'latest_post':latest_post,
         'site':SITE,
@@ -215,7 +229,12 @@ def build_posts(meta, full_rebuild=False):
         if os.path.exists(source_path) and source_mod_time > output_mod_time:
             html_content = markdown.markdown((post_meta['content_md']))
             page_meta = {**meta, 'post': post_meta,'content': html_content}
-            build_page(SITE['post']['template'], output_path, page_meta,full_rebuild)
+            build_page(SITE['post']['template'], output_path, page_meta, full_rebuild)
+
+
+def build_feed(meta, full_rebuild=False):
+    output_path = os.path.join(SITE['output']['dir'], SITE['feed']['output_file'])
+    build_page(SITE['feed']['template'], output_path, meta, full_rebuild)
 
 
 def generate_site(full_rebuild=False):
@@ -227,6 +246,7 @@ def generate_site(full_rebuild=False):
 
     build_pages(meta, full_rebuild)
     build_posts(meta, full_rebuild)
+    build_feed(meta)
     copy_assets()
 
     elapsed_time = time.time() - start_time

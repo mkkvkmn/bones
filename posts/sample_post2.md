@@ -1,5 +1,5 @@
 ---
-date: 2023-03-11
+date: 2023-03-11 17:00:00 +0200
 title: My Second Post
 description: >
     This is going to say something

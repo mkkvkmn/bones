@@ -1,9 +1,8 @@
 ---
-date: 2023-03-10
+date: 2023-03-10 17:00:00 +0200
 title: My First Post
 description: >
     This is going to say something
-    that is multiline
 url: sample
 ---
 

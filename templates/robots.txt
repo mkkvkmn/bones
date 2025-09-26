@@ -1,1 +1,0 @@
-Sitemap: {{ meta['site'].url }}/{{ meta['site']['robots'].output_file }}

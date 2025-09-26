@@ -7,35 +7,12 @@
 
 {% block content -%}
     <section class="page">
-        {% if doc.img %}
-        <div class="row full">
-            <div class="post-image full">
-            <img
-                src="/assets/images/{{doc.img}}"
-                alt="{{doc.title}}"
-            />
-            </div>
-        </div>
-        {% endif %}
-        <h1>{{ doc.title }}</h1>
+        <h1>Page Not Found</h1>
         <div>
-            <p>
-            {%- set current_lang = doc.language | default('en') -%}
-            {%- set error_config = languages.get(current_lang, {}).get('error_404', {}) -%}
-            {%- if error_config.description -%}
-                {{ error_config.description }}
-            {%- else -%}
-                Page not found. The page you're looking for doesn't exist or has been moved.
-            {%- endif -%}
-            </p>
+            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>
             <ul>
-            {%- if error_config.suggestions -%}
-                <li>{{ error_config.suggestions.check_url | default('Check the URL for typos.') }}</li>
-                <li><a href="{{ env.url }}/">{{ error_config.suggestions.go_home | default('Go back to homepage') }}</a></li>
-            {%- else -%}
                 <li>Check the URL for typos.</li>
-                <li><a href="{{ env.url }}/">Go back to homepage</a></li>
-            {%- endif -%}
+                <li>Go to: <a href="{{ env.url }}/">{{ env.url }}/</a></li>
             </ul>
         </div>
     </section>

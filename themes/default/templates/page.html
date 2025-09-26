@@ -1,0 +1,29 @@
+{% extends "base.html" -%}
+
+{% block head %}
+    {% include 'partials/auto-generated/_base_css.html' %}
+    {% include 'partials/auto-generated/_page_css.html' %}
+    {% include 'partials/_schema.html' %}
+{% endblock -%}
+
+{% block content -%}
+    <section class="page">
+        {% if doc.img %}
+        <div class="page-header">
+            <img 
+                src="/assets/images/{{ doc.img }}" 
+                alt="{{ doc.title }}"
+                class="page-image"
+            />
+        </div>
+        {% endif %}
+        
+        <header class="page-title">
+            <h1>{{ doc.title }}</h1>
+        </header>
+        
+        <div class="page-content">
+            {{ doc.html_content | safe }}
+        </div>
+    </section>
+{% endblock -%}

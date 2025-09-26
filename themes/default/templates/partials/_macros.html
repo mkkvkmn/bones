@@ -1,0 +1,35 @@
+
+{% macro set_title(doc, config) %}
+  {% set title = site.name %}
+  {% if doc and doc['title'] %}
+    {% set title = doc['title'] %}
+  {% endif %}
+  {{- title -}}
+{% endmacro %}
+
+{% macro set_description(doc, config) %}
+  {% set description = site.get('description', '') %}
+  {% if doc and doc['description'] %}
+    {% set description = doc['description'] %}
+  {% endif %}
+  {{- description -}}
+{% endmacro %}
+
+{% macro set_url(doc, config) %}
+  {% set url = env.url ~ '/' %}
+  {% if doc and doc['target_file'] %}
+    {% set clean_target = doc['target_file'] | replace('index.html', '') %}
+    {% set url = env.url ~ '/' ~ clean_target %}
+  {% elif doc and doc['url'] %}
+    {% set url = env.url ~ '/' ~ doc['url'] ~ '/' %}
+  {% endif %}
+  {{- url -}}
+{% endmacro %}
+
+{% macro set_img(doc, config) %}
+  {% set img = env.url ~ '/assets/images/' ~ site.img %}
+  {% if doc and doc['image'] %}
+    {% set img = env.url ~ '/assets/images/' ~ doc['image'] %}
+  {% endif %}
+  {{- img -}}
+{% endmacro %}

@@ -1,0 +1,44 @@
+{% include 'partials/auto-generated/_footer_css.html' %}
+
+<footer class="column">
+  <div class="row">
+    <div class="footer-disclaimer">
+      <h3 class="footer-section-title">{{ languages[doc.language].footer.columns.left.title }}</h3>
+      <p>{{ languages[doc.language].footer.columns.left.content | safe }}</p>
+    </div>
+    {% if languages[doc.language].footer.columns.right.subscribe.enabled %}
+    <div class="footer-subscribe" id="subscribe">
+      <h3 class="footer-section-title">{{ languages[doc.language].footer.columns.right.subscribe.title }}</h3>
+      <p>{{ languages[doc.language].footer.columns.right.subscribe.description }}</p>
+      <div class="form-wrapper">
+        <form action="{{ site.contact.subscribe_url }}" method="post" target="_blank">
+          <input type="email" name="EMAIL" placeholder="{{ languages[doc.language].footer.columns.right.subscribe.email_placeholder }}" required />
+          <button type="submit">{{ languages[doc.language].footer.columns.right.subscribe.button_text }}</button>
+        </form>
+      </div>
+    </div>
+    {% elif languages[doc.language].footer.columns.right.tag_cloud.enabled %}
+    <div class="footer-tag-cloud">
+      <h3 class="footer-section-title">{{ languages[doc.language].footer.columns.right.tag_cloud.title }}</h3>
+      <div class="tag-cloud">
+        {% for tag in tags[doc.language] %}
+        {% set tag_prefix = languages[doc.language].get('tag_url_prefix', 'tag') %}
+        {% if languages[doc.language].get('skip_language_path_in_url', False) %}
+        {% set tag_url = env.url ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}
+        {% else %}
+        {% set tag_url = env.url ~ '/' ~ doc.language ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}
+        {% endif %}
+        <a href="{{ tag_url }}" class="tag">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="row">
+    <div class="footer-copyright">
+      <p>
+        {{ site.logo }} &copy; {{ now.year }}
+      </p>
+    </div>
+  </div>
+</footer>

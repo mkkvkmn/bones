@@ -1,0 +1,43 @@
+{% import 'partials/_macros.html' as m %}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "{{ doc['schema'].type }}",
+    "publisher": {
+      "@type": "Person",
+      "name": "{{ site.name }}",
+      "url": "{{ env.url }}/"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "{{ site.name }}",
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ env.url }}/"
+      },
+      "url": "{{ env.url }}/{{ pages.get('about', {}).get('url', '') }}/",
+      "sameAs": [
+        "{{ env.url }}/",
+        "{{ site.contact.linkedin }}/",
+        "{{ site.contact.twitter }}/"
+      ]
+    },
+    "headline": "{{ doc.title }}",
+    "url": "{{ m.set_url(doc, config) }}",
+    "datePublished": "{{ doc.date_iso if doc.date else '' }}",
+    "dateModified": "{{ doc.date_mod_iso if doc.date_mod else doc.date_iso if doc.date else '' }}",
+    {% if doc.image %}
+    "image": {
+      "@type": "ImageObject",
+                      "url": "{{ env.url }}/assets/images/{{ doc.image }}"
+    },
+    {% endif %}
+    "keywords": "{{ doc.tags | join(', ') if doc.tags else '' }}",
+    "description": "{{ doc.description if doc.description else '' }}",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ env.url }}/"
+    }
+  }
+</script>

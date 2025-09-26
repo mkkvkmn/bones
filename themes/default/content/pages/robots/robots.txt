@@ -1,0 +1,14 @@
+User-agent: *
+{% for lang_code, lang_config in languages.items() %}
+{% if lang_config is mapping %}
+{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}
+{% if lang_config.get('skip_language_path_in_url', False) %}
+Disallow: /{{ tag_prefix }}/
+{% else %}
+Disallow: /{{ lang_code }}/{{ tag_prefix }}/
+{% endif %}
+{% endif %}
+{% endfor %}
+Disallow: /assets/
+
+Sitemap: {{ env.url }}/sitemap.xml

@@ -1,0 +1,20 @@
+---
+alwaysApply: true
+---
+
+# Cursor Rules for Static Site Generator
+
+## Project Overview
+
+A python static site generator that converts markdown content and templates into static HTML.
+
+`/docs/project_structure.md` - Structure guidance
+
+## Code Style & Quality
+
+- separate concerns
+- ignore style related errors e.g. line length
+- separate configuration, content and logic
+- create minimalistic, efficient and clear code
+- provide meaningful errors and logging
+- don't ever make any "ensure" or fallbacks - solve the real issue (no workarounds, no special handling)

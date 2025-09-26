@@ -1,0 +1,5 @@
+defaults:
+  template: post.html
+  schema:
+    type: BlogPosting
+  draft: false

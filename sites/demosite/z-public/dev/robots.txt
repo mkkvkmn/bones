@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /tag/
+Disallow: /assets/
+
+Sitemap: http://localhost:8000/sitemap.xml

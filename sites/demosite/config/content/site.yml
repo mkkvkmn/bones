@@ -1,0 +1,11 @@
+logo: DemoSite
+name: DemoSite
+img: default.jpg
+theme: default
+language_switcher:
+  enabled: true
+contact:
+  email: contact@DemoSite.com
+  subscribe_url: ''
+  twitter: ''
+  linkedin: ''

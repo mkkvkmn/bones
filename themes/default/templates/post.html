@@ -51,7 +51,9 @@
       <a href="mailto:{{ site.contact.email }}">{{ languages[doc.language or 'fi'].posts.after.email }}</a>.
       <br />
       <br />
+      {% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
       {{ languages[doc.language or 'fi'].posts.after.comment_notice }}
+      {% endif %}
     </p>
   </div>
   <div id="post-end"></div>

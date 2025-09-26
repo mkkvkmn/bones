@@ -67,8 +67,14 @@ def add_args_and_env_to_config(config: ConfigType) -> ConfigType:
     parser = argparse.ArgumentParser(description="Static Site Generator v4")
     parser.add_argument("--env", "-e", choices=["dev", "prod"], default=None)
     parser.add_argument("--verbose", "-v", action="store_true")
-    parser.add_argument("--site-name", "-s", help="Site name (overrides SITE_NAME env var)")
-    parser.add_argument("--sites-folder", "-d", help="Sites folder path (overrides SITES_FOLDER env var)")
+    parser.add_argument(
+        "--site-name", "-s", help="Site name (overrides SITE_NAME env var)"
+    )
+    parser.add_argument(
+        "--sites-folder",
+        "-d",
+        help="Sites folder path (overrides SITES_FOLDER env var)",
+    )
     args = parser.parse_args()
 
     if args.verbose:
@@ -512,21 +518,31 @@ def add_read_time_to_doc(doc: Dict[str, Any], config: ConfigType) -> Dict[str, A
 
 
 def add_navigation_links_to_docs(posts: List[Dict[str, Any]]) -> None:
-    """Add navigation metadata for posts (next/previous post links)."""
-    for i, post in enumerate(posts):
-        if i > 0:
-            post["next_post_url"] = posts[i - 1].get("url", "")
-            post["next_post_title"] = posts[i - 1].get("title", "")
-        else:
-            post["next_post_url"] = ""
-            post["next_post_title"] = ""
+    """Add navigation metadata for posts (next/previous post links) within the same language."""
+    # Group posts by language
+    posts_by_language = {}
+    for post in posts:
+        language = post.get("language", "en")
+        if language not in posts_by_language:
+            posts_by_language[language] = []
+        posts_by_language[language].append(post)
 
-        if i < len(posts) - 1:
-            post["prev_post_url"] = posts[i + 1].get("url", "")
-            post["prev_post_title"] = posts[i + 1].get("title", "")
-        else:
-            post["prev_post_url"] = ""
-            post["prev_post_title"] = ""
+    # Add navigation links within each language group
+    for language, lang_posts in posts_by_language.items():
+        for i, post in enumerate(lang_posts):
+            if i > 0:
+                post["next_post_url"] = lang_posts[i - 1].get("url", "")
+                post["next_post_title"] = lang_posts[i - 1].get("title", "")
+            else:
+                post["next_post_url"] = ""
+                post["next_post_title"] = ""
+
+            if i < len(lang_posts) - 1:
+                post["prev_post_url"] = lang_posts[i + 1].get("url", "")
+                post["prev_post_title"] = lang_posts[i + 1].get("title", "")
+            else:
+                post["prev_post_url"] = ""
+                post["prev_post_title"] = ""
 
 
 def add_latest_posts_to_config(
@@ -1314,9 +1330,10 @@ def main() -> None:
 
         time_phase("Phase 5: Validate site", validate_site, config)
 
-
         output_dir = Path(config["env"]["output_dir"])
-        logger.info(f"Done in: {time.time() - total_start_time:.2f}s (Output: {output_dir})")
+        logger.info(
+            f"Done in: {time.time() - total_start_time:.2f}s (Output: {output_dir})"
+        )
 
     except (ValueError, RuntimeError) as e:
         logger.error(f"Build failed: {e}")

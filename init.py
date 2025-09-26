@@ -880,7 +880,7 @@ Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 def main():
     parser = argparse.ArgumentParser(description="Initialize a new site structure")
     parser.add_argument("site_name", help="Name of the new site")
-    parser.add_argument("--sites-folder", "-d", help="Sites folder path (overrides .env and defaults to 'sites')")
+    parser.add_argument("--sites-folder", "-f", help="Sites folder path (overrides .env and defaults to 'sites')")
 
     args = parser.parse_args()
     site_name = args.site_name

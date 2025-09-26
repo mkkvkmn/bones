@@ -72,7 +72,7 @@ def add_args_and_env_to_config(config: ConfigType) -> ConfigType:
     )
     parser.add_argument(
         "--sites-folder",
-        "-d",
+        "-f",
         help="Sites folder path (overrides SITES_FOLDER env var)",
     )
     args = parser.parse_args()

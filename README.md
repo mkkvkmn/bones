@@ -45,6 +45,7 @@ A Python static site generator with multi-language and multi site support.
    python gen.py                   # Development
    python gen.py --env prod        # Production
    python gen.py --verbose         # Debug output
+   python gen.py -sfp content/posts/2025/2025-01-15-my-post/my-post.md  # Single file (fast)
    ```
 
 ## Project Structure
@@ -122,7 +123,23 @@ python init.py site-name        # Create new site
 python gen.py                   # Build site
 python gen.py --env prod       # Production build
 python gen.py --verbose        # Debug output
+python gen.py -sfp path/to/file.md  # Single file build (fast)
 ```
+
+### Single File Build
+
+For large sites you can do fast iteration while writing posts.
+
+Use the single file build mode:
+
+```bash
+python gen.py -s site-name -sf sites -sfp c:/site/content/posts/2025/2025-01-15-my-post/my-post.md
+```
+
+- Use absolute file path
+- Fast
+- Skips dependencies and validation
+- Remember to do a full build before publishing
 
 ## Requirements
 

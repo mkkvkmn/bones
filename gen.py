@@ -877,11 +877,11 @@ def build_docs(
 
             rendered_html = template.render(doc=doc, config=config)
 
-            validate_doc_html(rendered_html, doc.get("name", "unknown"))
-
             formatted_html = format_doc_html(
                 rendered_html, doc.get("name", "unknown"), config
             )
+
+            validate_doc_html(formatted_html, doc.get("name", "unknown"))
 
             save_doc(formatted_html, doc, config)
 

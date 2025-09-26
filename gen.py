@@ -75,6 +75,11 @@ def add_args_and_env_to_config(config: ConfigType) -> ConfigType:
         "-sf",
         help="Sites folder path (overrides SITES_FOLDER env var)",
     )
+    parser.add_argument(
+        "--single-file-path",
+        "-sfp",
+        help="Build only a single file (fast mode, skips dependencies). Use full file path.",
+    )
     args = parser.parse_args()
 
     if args.verbose:
@@ -93,6 +98,8 @@ def add_args_and_env_to_config(config: ConfigType) -> ConfigType:
         config["env"]["SITE_NAME"] = args.site_name
     if args.sites_folder:
         config["env"]["SITES_FOLDER"] = args.sites_folder
+    if args.single_file_path:
+        config["env"]["SINGLE_FILE_PATH"] = args.single_file_path
     if args.env is not None:
         config["env"]["BUILD_ENV"] = args.env
     elif "BUILD_ENV" not in config["env"]:
@@ -1204,6 +1211,85 @@ def is_valid_url(url: str, valid_urls: Set[str], config: ConfigType) -> bool:
 
 
 # =============================================================================
+# BUILD SINGLE FILE
+# =============================================================================
+
+
+def build_single_file(config: ConfigType, file_path: str) -> None:
+    """Build a single file in fast mode, skipping dependencies."""
+
+    logger.warning("Building a single doc.")
+    logger.warning("Remember to do a full build before publish to refresh dependencies")
+
+    file_path_obj = Path(file_path)
+
+    # Determine content type based on path
+    if "posts" in str(file_path_obj):
+        content_type = "posts"
+    elif "pages" in str(file_path_obj):
+        content_type = "pages"
+    else:
+        raise ValueError(f"Cannot determine content type for file: {file_path}")
+
+    # Create a minimal item for processing
+    item_name = file_path_obj.stem
+    item = {
+        "file_path": str(file_path_obj.absolute()),
+        "content_type": content_type,
+        "name": item_name,
+    }
+
+    # Process the single document
+    docs = process_single_doc(item, config)
+    if not docs:
+        raise ValueError(f"Failed to process file: {file_path}")
+
+    # Set up templates
+    template_env = build_templates(config)
+
+    # Build the single document
+    for doc in docs:
+        try:
+            # Convert template variables in content
+            try:
+                content_template = template_env.from_string(doc["html_content"])
+                doc["html_content"] = content_template.render(doc=doc, config=config)
+            except Exception as e:
+                raise ValueError(f"Template rendering error in content: {e}")
+
+            template_name = doc.get("template_page") or doc.get("template")
+            if not template_name:
+                raise ValueError(
+                    f"Template not found for: '{doc.get('name', 'unknown')}'"
+                )
+
+            if not Path(template_name).suffix:
+                template_name = f"{template_name}.html"
+
+            # If template_page is specified, use the processed content as template
+            if doc.get("template_page"):
+                template = template_env.from_string(doc["html_content"])
+            else:
+                # Load template from file
+                template = template_env.get_template(template_name)
+
+            rendered_html = template.render(doc=doc, config=config)
+
+            formatted_html = format_doc_html(
+                rendered_html, doc.get("name", "unknown"), config
+            )
+
+            save_doc(formatted_html, doc, config)
+
+            logger.info(f"Built single file: {doc.get('name', 'unknown')}")
+
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to render document *{doc.get('name', 'unknown')}*: {e}"
+            )
+
+
+# =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
@@ -1318,17 +1404,22 @@ def main() -> None:
     try:
         config = time_phase("Phase 1: Load initial config", load_initial_config)
 
-        config = time_phase(
-            "Phase 2: Discover content", add_discovered_to_config, config
-        )
+        # Check if single file build mode
+        single_file_path = config["env"].get("SINGLE_FILE_PATH")
+        if single_file_path:
+            time_phase("Single file build", build_single_file, config, single_file_path)
+        else:
+            config = time_phase(
+                "Phase 2: Discover content", add_discovered_to_config, config
+            )
 
-        config = time_phase(
-            "Phase 3: Process content", add_processed_content_to_config, config
-        )
+            config = time_phase(
+                "Phase 3: Process content", add_processed_content_to_config, config
+            )
 
-        time_phase("Phase 4: Generate site", generate_site, config)
+            time_phase("Phase 4: Generate site", generate_site, config)
 
-        time_phase("Phase 5: Validate site", validate_site, config)
+            time_phase("Phase 5: Validate site", validate_site, config)
 
         output_dir = Path(config["env"]["output_dir"])
         logger.info(

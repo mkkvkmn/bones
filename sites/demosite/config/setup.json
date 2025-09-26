@@ -189,8 +189,48 @@
           "url": "404.html",
           "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\404\\404.html",
           "content_type": "pages",
-          "content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        {% if doc.img %}\n        <div class=\"row full\">\n            <div class=\"post-image full\">\n            <img\n                src=\"/assets/images/{{doc.img}}\"\n                alt=\"{{doc.title}}\"\n            />\n            </div>\n        </div>\n        {% endif %}\n        <h1>{{ doc.title }}</h1>\n        <div>\n            <p>\n            {%- set current_lang = doc.language | default('en') -%}\n            {%- set error_config = languages.get(current_lang, {}).get('error_404', {}) -%}\n            {%- if error_config.description -%}\n                {{ error_config.description }}\n            {%- else -%}\n                Page not found. The page you're looking for doesn't exist or has been moved.\n            {%- endif -%}\n            </p>\n            <ul>\n            {%- if error_config.suggestions -%}\n                <li>{{ error_config.suggestions.check_url | default('Check the URL for typos.') }}</li>\n                <li><a href=\"{{ env.url }}/\">{{ error_config.suggestions.go_home | default('Go back to homepage') }}</a></li>\n            {%- else -%}\n                <li>Check the URL for typos.</li>\n                <li><a href=\"{{ env.url }}/\">Go back to homepage</a></li>\n            {%- endif -%}\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
-          "html_content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        {% if doc.img %}\n        <div class=\"row full\">\n            <div class=\"post-image full\">\n            <img\n                src=\"/assets/images/{{doc.img}}\"\n                alt=\"{{doc.title}}\"\n            />\n            </div>\n        </div>\n        {% endif %}\n        <h1>{{ doc.title }}</h1>\n        <div>\n            <p>\n            {%- set current_lang = doc.language | default('en') -%}\n            {%- set error_config = languages.get(current_lang, {}).get('error_404', {}) -%}\n            {%- if error_config.description -%}\n                {{ error_config.description }}\n            {%- else -%}\n                Page not found. The page you're looking for doesn't exist or has been moved.\n            {%- endif -%}\n            </p>\n            <ul>\n            {%- if error_config.suggestions -%}\n                <li>{{ error_config.suggestions.check_url | default('Check the URL for typos.') }}</li>\n                <li><a href=\"{{ env.url }}/\">{{ error_config.suggestions.go_home | default('Go back to homepage') }}</a></li>\n            {%- else -%}\n                <li>Check the URL for typos.</li>\n                <li><a href=\"{{ env.url }}/\">Go back to homepage</a></li>\n            {%- endif -%}\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
+          "content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        <h1>Page Not Found</h1>\n        <div>\n            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>\n            <ul>\n                <li>Check the URL for typos.</li>\n                <li>Go to: <a href=\"{{ env.url }}/\">{{ env.url }}/</a></li>\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
+          "html_content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        <h1>Page Not Found</h1>\n        <div>\n            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>\n            <ul>\n                <li>Check the URL for typos.</li>\n                <li>Go to: <a href=\"{{ env.url }}/\">{{ env.url }}/</a></li>\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
+          "date_html": "26.09.2025",
+          "date_iso": "2025-09-26T10:36:41+00:00",
+          "read_time": 1
+        },
+        "landing": {
+          "date": "2025-09-26 10:36:41+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\pages\\landing\\landing.html",
+          "content_type": "pages",
+          "name": "landing",
+          "title": "DemoSite",
+          "description": "Welcome to DemoSite",
+          "url": "index.html",
+          "target_file": "index.html",
+          "template_page": "landing/landing.html",
+          "content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
+          "html_content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
+          "date_html": "26.09.2025",
+          "date_iso": "2025-09-26T10:36:41+00:00",
+          "read_time": 1
+        },
+        "robots": {
+          "date": "2025-09-26 10:36:41+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "name": "robots",
+          "template_page": "robots/robots.txt",
+          "target_file": "robots.txt",
+          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\robots\\robots.txt",
+          "content_type": "pages",
+          "content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
+          "html_content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
+          "url": "robots.txt",
           "date_html": "26.09.2025",
           "date_iso": "2025-09-26T10:36:41+00:00",
           "read_time": 1
@@ -233,46 +273,6 @@
           "date_iso": "2025-09-26T10:36:41+00:00",
           "read_time": 1
         },
-        "robots": {
-          "date": "2025-09-26 10:36:41+00:00",
-          "template": "page.html",
-          "schema": {
-            "type": "WebPage"
-          },
-          "language": "en",
-          "name": "robots",
-          "template_page": "robots/robots.txt",
-          "target_file": "robots.txt",
-          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\robots\\robots.txt",
-          "content_type": "pages",
-          "content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
-          "html_content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
-          "url": "robots.txt",
-          "date_html": "26.09.2025",
-          "date_iso": "2025-09-26T10:36:41+00:00",
-          "read_time": 1
-        },
-        "landing": {
-          "date": "2025-09-26 10:36:41+00:00",
-          "template": "page.html",
-          "schema": {
-            "type": "WebPage"
-          },
-          "language": "en",
-          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\pages\\landing\\landing.html",
-          "content_type": "pages",
-          "name": "landing",
-          "title": "DemoSite",
-          "description": "Welcome to DemoSite",
-          "url": "index.html",
-          "target_file": "index.html",
-          "template_page": "landing/landing.html",
-          "content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
-          "html_content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
-          "date_html": "26.09.2025",
-          "date_iso": "2025-09-26T10:36:41+00:00",
-          "read_time": 1
-        },
         "tag-first-post-en": {
           "name": "tag-first-post-en",
           "title": "Tag: first-post",
@@ -281,7 +281,7 @@
           "url": "tag/first-post",
           "language": "en",
           "tag": "first-post",
-          "date": "2025-09-26 10:46:49 ",
+          "date": "2025-09-26 14:21:36 ",
           "content_type": "pages",
           "html_content": "<!-- Tag page content will be generated by template -->"
         },
@@ -293,7 +293,7 @@
           "url": "tag/guide",
           "language": "en",
           "tag": "guide",
-          "date": "2025-09-26 10:46:49 ",
+          "date": "2025-09-26 14:21:36 ",
           "content_type": "pages",
           "html_content": "<!-- Tag page content will be generated by template -->"
         },
@@ -305,7 +305,7 @@
           "url": "tag/static-site",
           "language": "en",
           "tag": "static-site",
-          "date": "2025-09-26 10:46:49 ",
+          "date": "2025-09-26 14:21:36 ",
           "content_type": "pages",
           "html_content": "<!-- Tag page content will be generated by template -->"
         },
@@ -317,7 +317,7 @@
           "url": "tag/tutorial",
           "language": "en",
           "tag": "tutorial",
-          "date": "2025-09-26 10:46:49 ",
+          "date": "2025-09-26 14:21:36 ",
           "content_type": "pages",
           "html_content": "<!-- Tag page content will be generated by template -->"
         },
@@ -329,7 +329,7 @@
           "url": "tag/welcome",
           "language": "en",
           "tag": "welcome",
-          "date": "2025-09-26 10:46:49 ",
+          "date": "2025-09-26 14:21:36 ",
           "content_type": "pages",
           "html_content": "<!-- Tag page content will be generated by template -->"
         }

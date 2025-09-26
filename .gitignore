@@ -1,8 +1,5 @@
 /venv
-/x_public_dev
-/isso
 sync.ffs_lock
 .env
-/z-public/*/dev
 __pycache__/
 /node_modules/

@@ -2,7 +2,7 @@
 
 > When Flesh and Muscles Are Too Much
 
-A Python static site generator with multi-language and multi site support.
+A Python static site generator with multi-language and multi-site support.
 
 ## Quick Start
 

@@ -56,4 +56,10 @@
     <meta property="twitter:image" content="{{ img }}" />
 
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    
+    {# Preload fonts to prevent layout shifts #}
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-900.woff2" as="font" type="font/woff2" crossorigin />
 {% endblock %}

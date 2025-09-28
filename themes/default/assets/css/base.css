@@ -3,36 +3,36 @@
   font-family: 'Work Sans';
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
-  src: url('assets/fonts/work-sans-v19-latin-regular.woff2') format('woff2'),
-       url('assets/fonts/work-sans-v19-latin-regular.woff') format('woff');
+  font-display: optional;
+  src: url('/assets/fonts/work-sans-v19-latin-regular.woff2') format('woff2'),
+       url('/assets/fonts/work-sans-v19-latin-regular.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-style: italic;
   font-weight: 400;
-  font-display: swap;
-  src: url('assets/fonts/work-sans-v19-latin-italic.woff2') format('woff2'),
-       url('assets/fonts/work-sans-v19-latin-italic.woff') format('woff');
+  font-display: optional;
+  src: url('/assets/fonts/work-sans-v19-latin-italic.woff2') format('woff2'),
+       url('/assets/fonts/work-sans-v19-latin-italic.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-style: normal;
   font-weight: 700;
-  font-display: swap;
-  src: url('assets/fonts/work-sans-v19-latin-700.woff2') format('woff2'),
-       url('assets/fonts/work-sans-v19-latin-700.woff') format('woff');
+  font-display: optional;
+  src: url('/assets/fonts/work-sans-v19-latin-700.woff2') format('woff2'),
+       url('/assets/fonts/work-sans-v19-latin-700.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-style: normal;
   font-weight: 900;
-  font-display: swap;
-  src: url('assets/fonts/work-sans-v19-latin-900.woff2') format('woff2'),
-       url('assets/fonts/work-sans-v19-latin-900.woff') format('woff');
+  font-display: optional;
+  src: url('/assets/fonts/work-sans-v19-latin-900.woff2') format('woff2'),
+       url('/assets/fonts/work-sans-v19-latin-900.woff') format('woff');
 }
 
 body {

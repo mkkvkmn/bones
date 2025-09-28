@@ -16,3 +16,8 @@ settings:
   html_date_format: '%d.%m.%Y'
   json_indent: 2
   time_precision: 3
+language_switcher:
+  enabled: false
+  codes:
+  - en
+  - fi

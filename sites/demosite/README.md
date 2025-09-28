@@ -65,4 +65,4 @@ To customize the theme:
 2. Site templates take priority over theme templates
 3. Modify `config/content/site.yml` to change theme or template settings
 
-Generated on 2025-09-26 10:36:41
+Generated on 2025-09-28 09:58:38

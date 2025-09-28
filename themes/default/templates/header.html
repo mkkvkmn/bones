@@ -30,9 +30,9 @@
       </li>
       {% endif %}
     {% endfor %}
-    {% if site.language_switcher.enabled %}
-      {% for lang_code, lang_config in languages.items() %}
-        {% if lang_code != doc.language and lang_config is mapping and 'skip_language_path_in_url' in lang_config %}
+    {% if config.build.language_switcher and config.build.language_switcher.enabled and config.build.language_switcher.codes %}
+      {% for lang_code in config.build.language_switcher.codes %}
+        {% if lang_code != doc.language %}
         <li>
           <a href="{{ get_language_url(lang_code) }}" class="lang-link">
             {{ lang_code.upper() }}

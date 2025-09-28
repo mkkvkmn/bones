@@ -884,11 +884,11 @@ def build_docs(
 
             rendered_html = template.render(doc=doc, config=config)
 
-            formatted_html = format_doc_html(
+            formatted_html = format_doc(
                 rendered_html, doc.get("name", "unknown"), config
             )
 
-            validate_doc_html(formatted_html, doc.get("name", "unknown"))
+            validate_doc(formatted_html, doc.get("name", "unknown"))
 
             save_doc(formatted_html, doc, config)
 
@@ -945,14 +945,28 @@ def save_doc(rendered_html: str, doc: Dict[str, Any], config: ConfigType) -> Non
             f.write(rendered_html)
 
 
-def format_doc_html(html_content: str, doc_name: str, config: ConfigType) -> str:
+def format_doc(html_content: str, doc_name: str, config: ConfigType) -> str:
     """Format HTML content based on configuration settings."""
+    warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+
     prettify_html = (
         config.get("build", {}).get("settings", {}).get("prettify_html", False)
     )
 
     if prettify_html:
-        return BeautifulSoup(html_content, "html.parser").prettify()
+        # Use appropriate parser based on document type
+        if doc_name in ["feed", "sitemap"] or doc_name.endswith(".xml"):
+            try:
+                return BeautifulSoup(html_content, "xml").prettify()
+            except Exception:
+                logger.debug(
+                    f"XML parser not available, using HTML parser for {doc_name}"
+                )
+                return BeautifulSoup(html_content, "html.parser").prettify()
+        elif doc_name in ["robots"] or doc_name.endswith(".txt"):
+            return html_content  # Skip text files
+        else:
+            return BeautifulSoup(html_content, "html.parser").prettify()
     else:
         # Minify html
         html_content = re.sub(r"\s+", " ", html_content)  # Multiple spaces to single
@@ -964,32 +978,32 @@ def format_doc_html(html_content: str, doc_name: str, config: ConfigType) -> str
         return html_content.strip()
 
 
-def validate_doc_html(html_content: str, doc_name: str) -> None:
-    """Validate HTML content structure using BeautifulSoup."""
+def validate_doc(content: str, doc_name: str) -> None:
+    """Validate document content structure using BeautifulSoup."""
     warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
     try:
         if doc_name in ["feed", "sitemap"] or doc_name.endswith(".xml"):
             try:
-                soup = BeautifulSoup(html_content, "xml")
+                soup = BeautifulSoup(content, "xml")
             except Exception:
                 logger.debug(
                     f"XML parser not available, using HTML parser for {doc_name}"
                 )
-                soup = BeautifulSoup(html_content, "html.parser")
+                soup = BeautifulSoup(content, "html.parser")
         elif doc_name in ["robots"] or doc_name.endswith(".txt"):
-            return  # Skip validation for text files
+            return  # Skip text files
         else:
-            soup = BeautifulSoup(html_content, "html.parser")
+            soup = BeautifulSoup(content, "html.parser")
 
-        # Validate HTML structure
+        # Validate document structure
         if not soup.find():
             raise ValueError(
-                f"HTML validation failed for '{doc_name}': Empty or invalid HTML structure"
+                f"Document validation failed for '{doc_name}': Empty or invalid structure"
             )
 
     except Exception as e:
-        raise ValueError(f"HTML validation failed for '{doc_name}': {e}")
+        raise ValueError(f"Document validation failed for '{doc_name}': {e}")
 
 
 def create_empty_index_files(config: ConfigType) -> None:
@@ -1275,7 +1289,7 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
 
             rendered_html = template.render(doc=doc, config=config)
 
-            formatted_html = format_doc_html(
+            formatted_html = format_doc(
                 rendered_html, doc.get("name", "unknown"), config
             )
 

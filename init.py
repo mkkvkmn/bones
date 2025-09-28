@@ -10,7 +10,7 @@ Usage:
 
 Examples:
     python init.py DemoSite --sites-folder sites
-    python init.py DemoSite -d sites
+    python init.py DemoSite -sf sites
 
 The script reads SITES_FOLDER from your .env file, but command line arguments take precedence (defaults to "sites").
 """
@@ -49,10 +49,13 @@ def create_build_yml(site_path: Path, site_name: str) -> None:
     build_config = {
         "envs": {
             "max_workers": 8,
-            "dev": {"output": f"sites/{site_name.lower()}/z-public/dev", "url": "http://localhost:8000"},
+            "dev": {
+                "output": f"sites/{site_name.lower()}/z-public/dev",
+                "url": "http://localhost:8000",
+            },
             "prod": {
-                "output": f"sites/{site_name.lower()}/z-public/prod", 
-                "url": f"https://{site_name.lower()}.com"
+                "output": f"sites/{site_name.lower()}/z-public/prod",
+                "url": f"https://{site_name.lower()}.com",
             },
         },
         "settings": {
@@ -65,6 +68,10 @@ def create_build_yml(site_path: Path, site_name: str) -> None:
             "html_date_format": "%d.%m.%Y",
             "json_indent": 2,
             "time_precision": 3,
+        },
+        "language_switcher": {
+            "enabled": False,
+            "codes": ["en", "fi"],
         },
     }
 
@@ -88,9 +95,6 @@ def create_site_yml(site_path: Path, site_name: str) -> None:
         "name": site_name,
         "img": "default.jpg",
         "theme": "default",
-        "language_switcher": {
-            "enabled": True
-        },
         "contact": {
             "email": f"contact@{site_name}.com",
             "subscribe_url": "",
@@ -207,7 +211,7 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                             "title": "Disclaimer",
                             "content": (
                                 "This is a sample disclaimer for your new site. You can customize this content."
-                            )
+                            ),
                         },
                         "right": {
                             "subscribe": {
@@ -215,19 +219,14 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                                 "title": "Subscribe",
                                 "description": "Articles only. No spam. Cancel anytime.",
                                 "email_placeholder": "Email",
-                                "button_text": "Subscribe"
+                                "button_text": "Subscribe",
                             },
-                            "tag_cloud": {
-                                "title": "Tags",
-                                "enabled": True
-                            }
-                        }
+                            "tag_cloud": {"title": "Tags", "enabled": True},
+                        },
                     }
                 },
                 "posts": {
-                    "meta": {
-                        "read_time_text": "min read"
-                    },
+                    "meta": {"read_time_text": "min read"},
                     "after": {
                         "privacy_notice": (
                             "The site does not store any information about you or use cookies when you read articles. "
@@ -238,23 +237,19 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                             "Note! Commenting uses cookies. Your name, email and website are saved to your browser so you can "
                             "comment more easily in the future with the same information. Fields are optional and you can "
                             "leave them empty if you wish."
-                        )
+                        ),
                     },
                     "comments": {
                         "javascript_required": "Enable Javascript if you want to participate in commenting.",
                         "back_to_top": "Back to comments ↑",
-                        "fields": {
-                            "name": "Name",
-                            "email": "Email",
-                            "website": "www"
-                        }
-                    }
+                        "fields": {"name": "Name", "email": "Email", "website": "www"},
+                    },
                 },
                 "archive": {
                     "no_posts": "No articles available.",
                     "tag_title": "Tag",
-                    "tag_description": "Posts tagged with '{tag}'"
-                }
+                    "tag_description": "Posts tagged with '{tag}'",
+                },
             }
         }
     else:  # Default to Finnish
@@ -278,7 +273,7 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                                 "Toivon, että tarinani antavat sinulle uusia ideoita, mutta mitään mitä kirjoitan ei "
                                 "tulisi tulkita neuvoksi. En ole vastuussa vahingoista tai tappioista. "
                                 "Lukeminen ja soveltaminen on omalla vastuullasi."
-                            )
+                            ),
                         },
                         "right": {
                             "subscribe": {
@@ -286,19 +281,14 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                                 "title": "Tilaa",
                                 "description": "Vain artikkelit. Ei roskapostia. Peru milloin vain.",
                                 "email_placeholder": "Sähköposti",
-                                "button_text": "Tilaa"
+                                "button_text": "Tilaa",
                             },
-                            "tag_cloud": {
-                                "title": "Aihepiirit",
-                                "enabled": True
-                            }
-                        }
+                            "tag_cloud": {"title": "Aihepiirit", "enabled": True},
+                        },
                     }
                 },
                 "posts": {
-                    "meta": {
-                        "read_time_text": "min lukuaika"
-                    },
+                    "meta": {"read_time_text": "min lukuaika"},
                     "after": {
                         "privacy_notice": (
                             "Sivusto ei tallenna sinusta mitään tietoja tai käytä evästeitä, kun luet artikkeleita. "
@@ -309,7 +299,7 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                             "Huom! Kommentointi käyttää evästeitä. Nimi, sähköposti ja verkkosivusi tallennetaan selaimeesi, "
                             "jotta voit jatkossa kommentoida helpommin samoilla tiedoilla. Kentät vapaaehtoisia ja voit "
                             "jättää ne halutessasi tyhjiksi."
-                        )
+                        ),
                     },
                     "comments": {
                         "javascript_required": "Laita Javascript päälle, jos haluat osallistua kommentointiin.",
@@ -317,15 +307,15 @@ def create_language_yml(site_path: Path, site_name: str, lang_code: str) -> None
                         "fields": {
                             "name": "Nimi",
                             "email": "Sähköposti",
-                            "website": "www"
-                        }
-                    }
+                            "website": "www",
+                        },
+                    },
                 },
                 "archive": {
                     "no_posts": "Ei artikkeleita saatavilla.",
                     "tag_title": "Aihepiiri",
-                    "tag_description": "Artikkelit aihepiiristä '{tag}'"
-                }
+                    "tag_description": "Artikkelit aihepiiristä '{tag}'",
+                },
             }
         }
 
@@ -347,9 +337,7 @@ def create_posts_yml(site_path: Path, site_name: str) -> None:
     posts_config = {
         "defaults": {
             "template": "post.html",
-            "schema": {
-                "type": "BlogPosting"
-            },
+            "schema": {"type": "BlogPosting"},
             "draft": False,
         },
     }
@@ -370,7 +358,7 @@ def create_posts_yml(site_path: Path, site_name: str) -> None:
 def create_sample_posts(site_path: Path, site_name: str) -> None:
     """Create sample posts to demonstrate the structure."""
     current_year = datetime.now().year
-    
+
     # First post - Welcome post
     post1_dir = (
         site_path
@@ -423,7 +411,7 @@ Happy blogging!
     placeholder1_image.write_text("Add your post images here")
 
     print(f"Created sample post: {post1_file.as_posix()}")
-    
+
     # Second post - Getting Started guide
     post2_dir = (
         site_path
@@ -515,7 +503,7 @@ def create_landing_page(site_path: Path, site_name: str) -> None:
     """Create a landing page template that extends the theme's base template."""
     landing_dir = site_path / "content" / "pages" / "landing"
     landing_dir.mkdir(parents=True, exist_ok=True)
-    
+
     landing_content = f"""---
 title: "{site_name}"
 description: "Welcome to {site_name}"
@@ -560,11 +548,11 @@ language: "en"
     </section>
 </main>
 {{% endblock %}}"""
-    
+
     landing_file = landing_dir / "landing.html"
     with open(landing_file, "w", encoding="utf-8") as f:
         f.write(landing_content)
-    
+
     print(f"Created landing page: {landing_file.as_posix()}")
 
 
@@ -572,7 +560,7 @@ def create_about_page(site_path: Path, site_name: str) -> None:
     """Create an about page template that extends the theme's base template."""
     about_dir = site_path / "content" / "pages" / "about"
     about_dir.mkdir(parents=True, exist_ok=True)
-    
+
     about_content = f"""---
 title: "About {site_name}"
 description: "Learn more about {site_name}"
@@ -608,11 +596,11 @@ language: "en"
     </section>
 </main>
 {{% endblock %}}"""
-    
+
     about_file = about_dir / "about.html"
     with open(about_file, "w", encoding="utf-8") as f:
         f.write(about_content)
-    
+
     print(f"Created about page: {about_file.as_posix()}")
 
 
@@ -620,7 +608,7 @@ def create_archive_page(site_path: Path, site_name: str) -> None:
     """Create an archive page template that extends the theme's base template."""
     archive_dir = site_path / "content" / "pages" / "archive"
     archive_dir.mkdir(parents=True, exist_ok=True)
-    
+
     archive_content = f"""---
 title: "Blog"
 description: "All blog posts"
@@ -680,11 +668,11 @@ language: "en"
     {{% endif %}}
 </div>
 {{% endblock %}}"""
-    
+
     archive_file = archive_dir / "archive.html"
     with open(archive_file, "w", encoding="utf-8") as f:
         f.write(archive_content)
-    
+
     print(f"Created archive page: {archive_file.as_posix()}")
 
 
@@ -791,7 +779,7 @@ h1 {
     favicon_file = site_path / "assets" / "favicon" / "favicon.ico"
     favicon_file.parent.mkdir(parents=True, exist_ok=True)
     favicon_file.write_text("Add your favicon.ico file here")
-    
+
     print("Created asset placeholder files")
 
 
@@ -880,7 +868,11 @@ Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 def main():
     parser = argparse.ArgumentParser(description="Initialize a new site structure")
     parser.add_argument("site_name", help="Name of the new site")
-    parser.add_argument("--sites-folder", "-sf", help="Sites folder path (overrides .env and defaults to 'sites')")
+    parser.add_argument(
+        "--sites-folder",
+        "-sf",
+        help="Sites folder path (overrides .env and defaults to 'sites')",
+    )
 
     args = parser.parse_args()
     site_name = args.site_name
@@ -909,6 +901,7 @@ def main():
         print(f"Site '{site_name}' already exists at {site_path}")
         print("Clearing existing site...")
         import shutil
+
         shutil.rmtree(site_path)
         print(f"Cleared existing site: {site_path}")
 
@@ -937,15 +930,15 @@ def main():
         # Create landing page template
         create_landing_page(site_path, site_name)
         print()
-        
+
         # Create about page template
         create_about_page(site_path, site_name)
         print()
-        
+
         # Create archive page template
         create_archive_page(site_path, site_name)
         print()
-        
+
         # Theme system provides standard pages (feed.xml, sitemap.xml, robots.txt, 404.html)
         print()
 
@@ -966,7 +959,9 @@ def main():
         print(f"2. Add content to {site_path.as_posix()}/content/")
         print(f"3. Add assets to {site_path.as_posix()}/assets/")
         print("4. Customize theme templates if needed")
-        print(f"5. Run the generator: python gen.py --site-name {site_name} --sites-folder {sites_folder}")
+        print(
+            f"5. Run the generator: python gen.py --site-name {site_name} --sites-folder {sites_folder}"
+        )
 
     except Exception as e:
         print(f"Error initializing site: {e}")

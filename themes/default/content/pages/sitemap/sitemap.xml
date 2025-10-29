@@ -1,0 +1,59 @@
+{% autoescape false %}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+    {# Main site pages #}
+    <url>
+        <loc>{{ env.url }}/</loc>
+        {% if latest_post and latest_post.date_mod_xml_sitemap %}
+        <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>
+        {% elif latest_post and latest_post.date_iso %}
+        <lastmod>{{ latest_post.date_iso }}Z</lastmod>
+        {% endif %}
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    {# Language root pages #}
+    {% for page_name, page in pages.items() %}
+        {% if page.target_file and page.target_file.endswith('/index.html') and page.target_file != 'index.html' %}
+        <url>
+            <loc>{{ env.url }}/{{ page.target_file.replace('/index.html', '') }}/</loc>
+            {% if page.date_mod_xml_sitemap %}
+            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>
+            {% elif latest_post and latest_post.date_mod_xml_sitemap %}
+            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>
+            {% endif %}
+            <changefreq>daily</changefreq>
+            <priority>1.0</priority>
+        </url>
+        {% endif %}
+    {% endfor %}
+    {# All static pages #}
+    {% for page_name, page in pages.items() %}
+        {% if page.url and page.url != "/" and not page.target_file %}
+        <url>
+            <loc>{{ env.url }}/{{ page.url }}/</loc>
+            {% if page.date_mod_xml_sitemap %}
+            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>
+            {% elif latest_post and latest_post.date_mod_xml_sitemap %}
+            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>
+            {% endif %}
+            <changefreq>weekly</changefreq>
+            <priority>0.8</priority>
+        </url>
+        {% endif %}
+    {% endfor %}
+    {# All blog posts #}
+    {% for post in posts %}
+    <url>
+        <loc>{{ env.url }}/{{ post.url }}/</loc>
+        {% if post.date_mod_xml_sitemap %}
+        <lastmod>{{ post.date_mod_xml_sitemap }}</lastmod>
+        {% elif post.date_iso %}
+        <lastmod>{{ post.date_iso }}Z</lastmod>
+        {% endif %}
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    {% endfor %}
+</urlset>
+{% endautoescape %}

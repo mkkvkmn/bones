@@ -1,0 +1,23 @@
+envs:
+  max_workers: 8
+  dev:
+    output: sites/demosite/z-public/dev
+    url: http://localhost:8000
+  prod:
+    output: sites/demosite/z-public/prod
+    url: https://demosite.com
+settings:
+  create_config: true
+  validate_site: true
+  prettify_html: true
+  front_matter_parts: 3
+  read_time_words_per_minute: 200
+  date_format: '%Y-%m-%d %H:%M:%S %z'
+  html_date_format: '%d.%m.%Y'
+  json_indent: 2
+  time_precision: 3
+language_switcher:
+  enabled: false
+  codes:
+  - en
+  - fi

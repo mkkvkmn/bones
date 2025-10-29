@@ -1,0 +1,6 @@
+/venv
+sync.ffs_lock
+.env
+__pycache__/
+/node_modules/
+.cursor/

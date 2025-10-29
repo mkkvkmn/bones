@@ -1,0 +1,484 @@
+{
+  "config_state": "after processing",
+  "env": {
+    "SITES_FOLDER": "sites",
+    "SITE_NAME": "DemoSite",
+    "BUILD_ENV": "dev",
+    "url": "http://localhost:8000",
+    "output_dir": "sites/demosite/z-public/dev"
+  },
+  "build": {
+    "settings": {
+      "theme": {
+        "dir": "themes\\default"
+      },
+      "site": {
+        "dir": "sites\\demosite"
+      },
+      "create_config": true,
+      "validate_site": true,
+      "prettify_html": true,
+      "front_matter_parts": 3,
+      "read_time_words_per_minute": 200,
+      "date_format": "%Y-%m-%d %H:%M:%S %z",
+      "html_date_format": "%d.%m.%Y",
+      "json_indent": 2,
+      "time_precision": 3
+    },
+    "envs": {
+      "max_workers": 8,
+      "dev": {
+        "output": "sites/demosite/z-public/dev",
+        "url": "http://localhost:8000"
+      },
+      "prod": {
+        "output": "sites/demosite/z-public/prod",
+        "url": "https://demosite.com"
+      }
+    },
+    "language_switcher": {
+      "enabled": false,
+      "codes": [
+        "en",
+        "fi"
+      ]
+    }
+  },
+  "content": {
+    "posts": {
+      "defaults": {
+        "template": "post.html",
+        "schema": {
+          "type": "BlogPosting"
+        },
+        "draft": false
+      },
+      "items": {
+        "2025-01-15-getting-started": {
+          "template": "post.html",
+          "schema": {
+            "type": "BlogPosting"
+          },
+          "draft": false,
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\posts\\2025\\2025-01-15-getting-started\\2025-01-15-getting-started.md",
+          "content_type": "posts",
+          "name": "2025-01-15-getting-started",
+          "title": "Getting Started with Static Site Generation",
+          "date": "2025-01-15 14:30:00+00:00",
+          "url": "getting-started",
+          "description": "Learn how to create and customize your static site",
+          "tags": [
+            "tutorial",
+            "guide",
+            "static-site"
+          ],
+          "language": "en",
+          "content": "\n\n# Getting Started with Static Site Generation\n\nThis is your second post, demonstrating more advanced features of the static site generator.\n\n## What is a Static Site Generator?\n\nA static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:\n\n- **Performance**: Static files load faster than dynamic pages\n- **Security**: No server-side code means fewer vulnerabilities\n- **Reliability**: Fewer moving parts means less can go wrong\n- **Cost**: Can be hosted on simple file hosting services\n\n## Key Features\n\n### Markdown Support\nWrite your content in Markdown for easy formatting:\n\n```markdown\n# This is a heading\n## This is a subheading\n\n- Bullet point 1\n- Bullet point 2\n\n**Bold text** and *italic text*\n```\n\n### Front Matter\nEach post can include metadata at the top:\n\n```yaml\n---\ntitle: \"Your Post Title\"\ndate: \"2025-01-15 14:30:00 +0000\"\nurl: \"your-post-url\"\ndescription: \"A brief description\"\ntags: [\"tag1\", \"tag2\"]\nlanguage: \"en\"\n---\n```\n\n### Template System\nThe generator uses Jinja2 templates for flexible page layouts.\n\n## Next Steps\n\n1. Explore the theme templates in `themes/default/templates/`\n2. Customize the CSS in your site's `assets/css/` directory\n3. Add more content and experiment with different post formats\n4. Configure your site settings in the `config/` directory\n\nHappy building!\n",
+          "html_content": "<h1 id=\"getting-started-with-static-site-generation\">Getting Started with Static Site Generation</h1>\n<p>This is your second post, demonstrating more advanced features of the static site generator.</p>\n<h2 id=\"what-is-a-static-site-generator\">What is a Static Site Generator?</h2>\n<p>A static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:</p>\n<ul>\n<li><strong>Performance</strong>: Static files load faster than dynamic pages</li>\n<li><strong>Security</strong>: No server-side code means fewer vulnerabilities</li>\n<li><strong>Reliability</strong>: Fewer moving parts means less can go wrong</li>\n<li><strong>Cost</strong>: Can be hosted on simple file hosting services</li>\n</ul>\n<h2 id=\"key-features\">Key Features</h2>\n<h3 id=\"markdown-support\">Markdown Support</h3>\n<p>Write your content in Markdown for easy formatting:</p>\n<p>```markdown</p>\n<h1 id=\"this-is-a-heading\">This is a heading</h1>\n<h2 id=\"this-is-a-subheading\">This is a subheading</h2>\n<ul>\n<li>Bullet point 1</li>\n<li>Bullet point 2</li>\n</ul>\n<p><strong>Bold text</strong> and <em>italic text</em>\n```</p>\n<h3 id=\"front-matter\">Front Matter</h3>\n<p>Each post can include metadata at the top:</p>\n<h2 id=\"yaml\">```yaml</h2>\n<p>title: \"Your Post Title\"\ndate: \"2025-01-15 14:30:00 +0000\"\nurl: \"your-post-url\"\ndescription: \"A brief description\"\ntags: [\"tag1\", \"tag2\"]\nlanguage: \"en\"</p>\n<hr />\n<p>```</p>\n<h3 id=\"template-system\">Template System</h3>\n<p>The generator uses Jinja2 templates for flexible page layouts.</p>\n<h2 id=\"next-steps\">Next Steps</h2>\n<ol>\n<li>Explore the theme templates in <code>themes/default/templates/</code></li>\n<li>Customize the CSS in your site's <code>assets/css/</code> directory</li>\n<li>Add more content and experiment with different post formats</li>\n<li>Configure your site settings in the <code>config/</code> directory</li>\n</ol>\n<p>Happy building!</p>",
+          "date_html": "15.01.2025",
+          "date_iso": "2025-01-15T14:30:00+00:00",
+          "read_time": 1,
+          "next_post_url": "",
+          "next_post_title": "",
+          "prev_post_url": "welcome-post",
+          "prev_post_title": "Welcome to DemoSite"
+        },
+        "2025-01-01-welcome-post": {
+          "template": "post.html",
+          "schema": {
+            "type": "BlogPosting"
+          },
+          "draft": false,
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\posts\\2025\\2025-01-01-welcome-post\\2025-01-01-welcome-post.md",
+          "content_type": "posts",
+          "name": "2025-01-01-welcome-post",
+          "title": "Welcome to DemoSite",
+          "date": "2025-01-01 12:00:00+00:00",
+          "url": "welcome-post",
+          "description": "Welcome to your new site",
+          "tags": [
+            "welcome",
+            "first-post"
+          ],
+          "language": "en",
+          "content": "\n\n# Welcome to DemoSite\n\nThis is your first post. You can edit this file to add your content.\n\n## Getting Started\n\n1. Edit this post in `sites\\demosite\\content\\posts\\2025\\2025-01-01-welcome-post/2025-01-01-welcome-post.md`\n2. Add images to the `images/` subdirectory\n3. Customize your site configuration in `config/content.yml`\n4. Run the generator to build your site\n\n## Features\n\n- Markdown support with front matter\n- Automatic date processing\n- Tag-based organization\n- Multi-language support\n- Responsive templates\n\nHappy blogging!\n",
+          "html_content": "<h1 id=\"welcome-to-demosite\">Welcome to DemoSite</h1>\n<p>This is your first post. You can edit this file to add your content.</p>\n<h2 id=\"getting-started\">Getting Started</h2>\n<ol>\n<li>Edit this post in <code>sites\\demosite\\content\\posts\\2025\\2025-01-01-welcome-post/2025-01-01-welcome-post.md</code></li>\n<li>Add images to the <code>images/</code> subdirectory</li>\n<li>Customize your site configuration in <code>config/content.yml</code></li>\n<li>Run the generator to build your site</li>\n</ol>\n<h2 id=\"features\">Features</h2>\n<ul>\n<li>Markdown support with front matter</li>\n<li>Automatic date processing</li>\n<li>Tag-based organization</li>\n<li>Multi-language support</li>\n<li>Responsive templates</li>\n</ul>\n<p>Happy blogging!</p>",
+          "date_html": "01.01.2025",
+          "date_iso": "2025-01-01T12:00:00+00:00",
+          "read_time": 1,
+          "next_post_url": "getting-started",
+          "next_post_title": "Getting Started with Static Site Generation",
+          "prev_post_url": "",
+          "prev_post_title": ""
+        }
+      }
+    },
+    "pages": {
+      "defaults": {
+        "date": "2025-09-28 09:58:38 +0000",
+        "template": "page.html",
+        "schema": {
+          "type": "WebPage"
+        },
+        "language": "en"
+      },
+      "tags": {
+        "enabled": true,
+        "items": {
+          "en": [
+            "first-post",
+            "guide",
+            "static-site",
+            "tutorial",
+            "welcome"
+          ]
+        },
+        "template": "tag.html",
+        "languages": [
+          "en"
+        ]
+      },
+      "items": {
+        "about": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\pages\\about\\about.html",
+          "content_type": "pages",
+          "name": "about",
+          "title": "About DemoSite",
+          "description": "Learn more about DemoSite",
+          "url": "about",
+          "template_page": "about/about.html",
+          "nav_title": "About",
+          "content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <h1>{{ doc.title or 'About DemoSite' }}</h1>\n    <p>{{ doc.description or 'Learn more about DemoSite' }}</p>\n    \n    <section>\n        <h2>About This Site</h2>\n        <p>This is a sample about page for your new site. You can customize this content.</p>\n        \n        <h3>Features</h3>\n        <ul>\n            <li>Static site generation with markdown support</li>\n            <li>Theme-based design system</li>\n            <li>Responsive templates</li>\n            <li>Multi-language support</li>\n            <li>Tag-based content organization</li>\n        </ul>\n        \n        <h3>Contact</h3>\n        <p>Feel free to get in touch if you have any questions or suggestions.</p>\n    </section>\n</main>\n{% endblock %}",
+          "html_content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <h1>{{ doc.title or 'About DemoSite' }}</h1>\n    <p>{{ doc.description or 'Learn more about DemoSite' }}</p>\n    \n    <section>\n        <h2>About This Site</h2>\n        <p>This is a sample about page for your new site. You can customize this content.</p>\n        \n        <h3>Features</h3>\n        <ul>\n            <li>Static site generation with markdown support</li>\n            <li>Theme-based design system</li>\n            <li>Responsive templates</li>\n            <li>Multi-language support</li>\n            <li>Tag-based content organization</li>\n        </ul>\n        \n        <h3>Contact</h3>\n        <p>Feel free to get in touch if you have any questions or suggestions.</p>\n    </section>\n</main>\n{% endblock %}",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "archive": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\pages\\archive\\archive.html",
+          "content_type": "pages",
+          "name": "archive",
+          "title": "Blog",
+          "description": "All blog posts",
+          "url": "blog",
+          "template_page": "archive/archive.html",
+          "nav_title": "Blog",
+          "content": "\n\n{% extends \"base.html\" %}\n\n{% block head %}\n    {% include 'partials/auto-generated/_archive_css.html' %}\n{% endblock %}\n\n{% block content %}\n<div class=\"archive\">\n    <h1>{{ doc.title }}</h1>\n    \n    {% set filtered_posts = [] %}\n    {% for post in posts %}\n        {% if post.language == doc.language %}\n            {% set _ = filtered_posts.append(post) %}\n        {% endif %}\n    {% endfor %}\n    \n    {% if filtered_posts %}\n        <div class=\"posts-list\">\n            {% for post in filtered_posts %}\n                <article class=\"post-summary\">\n                    <h2><a href=\"{{ env.url }}/{{ post.url }}/\">{{ post.title }}</a></h2>\n                    <div class=\"post-meta\">\n                        {{ post.date_html }} - {{ post.read_time or 5 }} {{ languages[doc.language].read }}\n                    </div>\n                    {% if post.description %}\n                    <p class=\"post-description\">{{ post.description }}</p>\n                    {% endif %}\n                    {% if post.tags %}\n                    <div class=\"post-tags\">\n                        {% for tag in post.tags %}\n                        {% set tag_prefix = languages[post.language].get('tag_url_prefix', 'tag') %}\n                        {% if languages[post.language].get('skip_language_path_in_url', False) %}\n                        {% set tag_url = env.url ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}\n                        {% else %}\n                        {% set tag_url = env.url ~ '/' ~ post.language ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}\n                        {% endif %}\n                        <a href=\"{{ tag_url }}\" class=\"tag\">{{ tag }}</a>\n                        {% endfor %}\n                    </div>\n                    {% endif %}\n                </article>\n            {% endfor %}\n        </div>\n    {% else %}\n        <p>{{ languages[doc.language].archive.no_posts }}</p>\n    {% endif %}\n</div>\n{% endblock %}",
+          "html_content": "\n\n{% extends \"base.html\" %}\n\n{% block head %}\n    {% include 'partials/auto-generated/_archive_css.html' %}\n{% endblock %}\n\n{% block content %}\n<div class=\"archive\">\n    <h1>{{ doc.title }}</h1>\n    \n    {% set filtered_posts = [] %}\n    {% for post in posts %}\n        {% if post.language == doc.language %}\n            {% set _ = filtered_posts.append(post) %}\n        {% endif %}\n    {% endfor %}\n    \n    {% if filtered_posts %}\n        <div class=\"posts-list\">\n            {% for post in filtered_posts %}\n                <article class=\"post-summary\">\n                    <h2><a href=\"{{ env.url }}/{{ post.url }}/\">{{ post.title }}</a></h2>\n                    <div class=\"post-meta\">\n                        {{ post.date_html }} - {{ post.read_time or 5 }} {{ languages[doc.language].read }}\n                    </div>\n                    {% if post.description %}\n                    <p class=\"post-description\">{{ post.description }}</p>\n                    {% endif %}\n                    {% if post.tags %}\n                    <div class=\"post-tags\">\n                        {% for tag in post.tags %}\n                        {% set tag_prefix = languages[post.language].get('tag_url_prefix', 'tag') %}\n                        {% if languages[post.language].get('skip_language_path_in_url', False) %}\n                        {% set tag_url = env.url ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}\n                        {% else %}\n                        {% set tag_url = env.url ~ '/' ~ post.language ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}\n                        {% endif %}\n                        <a href=\"{{ tag_url }}\" class=\"tag\">{{ tag }}</a>\n                        {% endfor %}\n                    </div>\n                    {% endif %}\n                </article>\n            {% endfor %}\n        </div>\n    {% else %}\n        <p>{{ languages[doc.language].archive.no_posts }}</p>\n    {% endif %}\n</div>\n{% endblock %}",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "404": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "name": "404",
+          "title": "Page Not Found",
+          "description": "404 - Page not found",
+          "template_page": "404/404.html",
+          "target_file": "404.html",
+          "url": "404.html",
+          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\404\\404.html",
+          "content_type": "pages",
+          "content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        <h1>Page Not Found</h1>\n        <div>\n            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>\n            <ul>\n                <li>Check the URL for typos.</li>\n                <li>Go to: <a href=\"{{ env.url }}/\">{{ env.url }}/</a></li>\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
+          "html_content": "\n{% extends \"base.html\" -%} \n\n{% block head %}\n    {% include 'partials/auto-generated/_page_css.html' %}\n{% endblock -%}\n\n{% block content -%}\n    <section class=\"page\">\n        <h1>Page Not Found</h1>\n        <div>\n            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>\n            <ul>\n                <li>Check the URL for typos.</li>\n                <li>Go to: <a href=\"{{ env.url }}/\">{{ env.url }}/</a></li>\n            </ul>\n        </div>\n    </section>\n{% endblock %}",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "feed": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "name": "feed",
+          "template_page": "feed/feed.xml",
+          "target_file": "feed.xml",
+          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\feed\\feed.xml",
+          "content_type": "pages",
+          "content": "\n<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n    <channel>\n        <atom:link href=\"{{ env.url }}/{{ doc.target_file or 'feed.xml' }}\" rel=\"self\" type=\"application/rss+xml\" />\n        <title>{{ site.name }}</title>\n        <link>{{ env.url }}</link>\n        <description>\n        {%- set current_lang = doc.language | default('en') -%}\n        {%- set lang_config = languages.get(current_lang, {}) -%}\n        {{ lang_config.site_description | default(site.description | default('Site RSS Feed')) }}\n        </description>\n        <language>\n        {%- set lang_config = languages.get(current_lang, {}) -%}\n        {{ lang_config.xml | default(site.lang_xml | default('en')) }}\n        </language>\n        {% if latest_post and latest_post.date_xml_feed %}\n        <lastBuildDate>{{ latest_post.date_xml_feed }}</lastBuildDate>\n        {% endif %}\n\n        {% for post in posts %}\n        {%- set post_lang = post.language | default('en') -%}\n        {%- if post_lang == current_lang or (not doc.language and not post.language) -%}\n        <item>\n            <title>{{ post.title.replace(\"&\", \"&amp;\").replace(\"<\", \"&lt;\").replace(\">\", \"&gt;\") }}</title>\n            <link>{{ env.url }}/{{ post.url }}/</link>\n            <description>{{ post.content.replace(\"&\", \"&amp;\").replace(\"<\", \"&lt;\").replace(\">\", \"&gt;\") | safe -}}</description>\n            <pubDate>{{ post.date_xml_feed }}</pubDate>\n            <guid>{{ env.url }}/{{ post.url }}/</guid>\n        </item>\n        {% endif %}\n        {% endfor %}\n    </channel>\n</rss>\n",
+          "html_content": "\n<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n    <channel>\n        <atom:link href=\"{{ env.url }}/{{ doc.target_file or 'feed.xml' }}\" rel=\"self\" type=\"application/rss+xml\" />\n        <title>{{ site.name }}</title>\n        <link>{{ env.url }}</link>\n        <description>\n        {%- set current_lang = doc.language | default('en') -%}\n        {%- set lang_config = languages.get(current_lang, {}) -%}\n        {{ lang_config.site_description | default(site.description | default('Site RSS Feed')) }}\n        </description>\n        <language>\n        {%- set lang_config = languages.get(current_lang, {}) -%}\n        {{ lang_config.xml | default(site.lang_xml | default('en')) }}\n        </language>\n        {% if latest_post and latest_post.date_xml_feed %}\n        <lastBuildDate>{{ latest_post.date_xml_feed }}</lastBuildDate>\n        {% endif %}\n\n        {% for post in posts %}\n        {%- set post_lang = post.language | default('en') -%}\n        {%- if post_lang == current_lang or (not doc.language and not post.language) -%}\n        <item>\n            <title>{{ post.title.replace(\"&\", \"&amp;\").replace(\"<\", \"&lt;\").replace(\">\", \"&gt;\") }}</title>\n            <link>{{ env.url }}/{{ post.url }}/</link>\n            <description>{{ post.content.replace(\"&\", \"&amp;\").replace(\"<\", \"&lt;\").replace(\">\", \"&gt;\") | safe -}}</description>\n            <pubDate>{{ post.date_xml_feed }}</pubDate>\n            <guid>{{ env.url }}/{{ post.url }}/</guid>\n        </item>\n        {% endif %}\n        {% endfor %}\n    </channel>\n</rss>\n",
+          "url": "feed.xml",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "robots": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "name": "robots",
+          "template_page": "robots/robots.txt",
+          "target_file": "robots.txt",
+          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\robots\\robots.txt",
+          "content_type": "pages",
+          "content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
+          "html_content": "User-agent: *\n{% for lang_code, lang_config in languages.items() %}\n{% if lang_config is mapping %}\n{% set tag_prefix = lang_config.get('tag_url_prefix', 'tag') %}\n{% if lang_config.get('skip_language_path_in_url', False) %}\nDisallow: /{{ tag_prefix }}/\n{% else %}\nDisallow: /{{ lang_code }}/{{ tag_prefix }}/\n{% endif %}\n{% endif %}\n{% endfor %}\nDisallow: /assets/\n\nSitemap: {{ env.url }}/sitemap.xml\n",
+          "url": "robots.txt",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "sitemap": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "name": "sitemap",
+          "template_page": "sitemap/sitemap.xml",
+          "target_file": "sitemap.xml",
+          "file_path": "C:\\a\\repos\\bones\\themes\\default\\content\\pages\\sitemap\\sitemap.xml",
+          "content_type": "pages",
+          "content": "{% autoescape false %}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n    \n    {# Main site pages #}\n    <url>\n        <loc>{{ env.url }}/</loc>\n        {% if latest_post and latest_post.date_mod_xml_sitemap %}\n        <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n        {% elif latest_post and latest_post.date_iso %}\n        <lastmod>{{ latest_post.date_iso }}Z</lastmod>\n        {% endif %}\n        <changefreq>daily</changefreq>\n        <priority>1.0</priority>\n    </url>\n    \n    {# Language root pages #}\n    {% for page_name, page in pages.items() %}\n        {% if page.target_file and page.target_file.endswith('/index.html') and page.target_file != 'index.html' %}\n        <url>\n            <loc>{{ env.url }}/{{ page.target_file.replace('/index.html', '') }}/</loc>\n            {% if page.date_mod_xml_sitemap %}\n            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>\n            {% elif latest_post and latest_post.date_mod_xml_sitemap %}\n            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n            {% endif %}\n            <changefreq>daily</changefreq>\n            <priority>1.0</priority>\n        </url>\n        {% endif %}\n    {% endfor %}\n    \n    {# All static pages #}\n    {% for page_name, page in pages.items() %}\n        {% if page.url and page.url != \"/\" and not page.target_file %}\n        <url>\n            <loc>{{ env.url }}/{{ page.url }}/</loc>\n            {% if page.date_mod_xml_sitemap %}\n            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>\n            {% elif latest_post and latest_post.date_mod_xml_sitemap %}\n            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n            {% endif %}\n            <changefreq>weekly</changefreq>\n            <priority>0.8</priority>\n        </url>\n        {% endif %}\n    {% endfor %}\n    \n    {# All blog posts #}\n    {% for post in posts %}\n    <url>\n        <loc>{{ env.url }}/{{ post.url }}/</loc>\n        {% if post.date_mod_xml_sitemap %}\n        <lastmod>{{ post.date_mod_xml_sitemap }}</lastmod>\n        {% elif post.date_iso %}\n        <lastmod>{{ post.date_iso }}Z</lastmod>\n        {% endif %}\n        <changefreq>monthly</changefreq>\n        <priority>0.6</priority>\n    </url>\n    {% endfor %}\n    \n</urlset>\n{% endautoescape %}\n",
+          "html_content": "{% autoescape false %}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n    \n    {# Main site pages #}\n    <url>\n        <loc>{{ env.url }}/</loc>\n        {% if latest_post and latest_post.date_mod_xml_sitemap %}\n        <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n        {% elif latest_post and latest_post.date_iso %}\n        <lastmod>{{ latest_post.date_iso }}Z</lastmod>\n        {% endif %}\n        <changefreq>daily</changefreq>\n        <priority>1.0</priority>\n    </url>\n    \n    {# Language root pages #}\n    {% for page_name, page in pages.items() %}\n        {% if page.target_file and page.target_file.endswith('/index.html') and page.target_file != 'index.html' %}\n        <url>\n            <loc>{{ env.url }}/{{ page.target_file.replace('/index.html', '') }}/</loc>\n            {% if page.date_mod_xml_sitemap %}\n            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>\n            {% elif latest_post and latest_post.date_mod_xml_sitemap %}\n            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n            {% endif %}\n            <changefreq>daily</changefreq>\n            <priority>1.0</priority>\n        </url>\n        {% endif %}\n    {% endfor %}\n    \n    {# All static pages #}\n    {% for page_name, page in pages.items() %}\n        {% if page.url and page.url != \"/\" and not page.target_file %}\n        <url>\n            <loc>{{ env.url }}/{{ page.url }}/</loc>\n            {% if page.date_mod_xml_sitemap %}\n            <lastmod>{{ page.date_mod_xml_sitemap }}</lastmod>\n            {% elif latest_post and latest_post.date_mod_xml_sitemap %}\n            <lastmod>{{ latest_post.date_mod_xml_sitemap }}</lastmod>\n            {% endif %}\n            <changefreq>weekly</changefreq>\n            <priority>0.8</priority>\n        </url>\n        {% endif %}\n    {% endfor %}\n    \n    {# All blog posts #}\n    {% for post in posts %}\n    <url>\n        <loc>{{ env.url }}/{{ post.url }}/</loc>\n        {% if post.date_mod_xml_sitemap %}\n        <lastmod>{{ post.date_mod_xml_sitemap }}</lastmod>\n        {% elif post.date_iso %}\n        <lastmod>{{ post.date_iso }}Z</lastmod>\n        {% endif %}\n        <changefreq>monthly</changefreq>\n        <priority>0.6</priority>\n    </url>\n    {% endfor %}\n    \n</urlset>\n{% endautoescape %}\n",
+          "url": "sitemap.xml",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "landing": {
+          "date": "2025-09-28 09:58:38+00:00",
+          "template": "page.html",
+          "schema": {
+            "type": "WebPage"
+          },
+          "language": "en",
+          "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\pages\\landing\\landing.html",
+          "content_type": "pages",
+          "name": "landing",
+          "title": "DemoSite",
+          "description": "Welcome to DemoSite",
+          "url": "index.html",
+          "target_file": "index.html",
+          "template_page": "landing/landing.html",
+          "content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
+          "html_content": "\n\n{% extends \"base.html\" %}\n\n{% block content %}\n<main>\n    <section class=\"hero\">\n        <h1>{{ doc.title or 'DemoSite' }}</h1>\n        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>\n    </section>\n    \n    {% if latest_post %}\n    <section class=\"latest-post\">\n        <h2>Latest Post</h2>\n        <article>\n            <h3><a href=\"/{{ latest_post.url }}\">{{ latest_post.title }}</a></h3>\n            <p>{{ latest_post.description }}</p>\n            <time>{{ latest_post.date_html }}</time>\n        </article>\n    </section>\n    {% endif %}\n    \n    <section class=\"welcome\">\n        <h2>Welcome to Your New Site</h2>\n        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>\n        \n        <h3>Getting Started</h3>\n        <ul>\n            <li>Edit this landing page template</li>\n            <li>Add your own content and pages</li>\n            <li>Customize the theme and styling</li>\n            <li>Configure your site settings</li>\n        </ul>\n    </section>\n</main>\n{% endblock %}",
+          "date_html": "28.09.2025",
+          "date_iso": "2025-09-28T09:58:38+00:00",
+          "read_time": 1
+        },
+        "tag-first-post-en": {
+          "name": "tag-first-post-en",
+          "title": "Tag: first-post",
+          "description": "Posts tagged with 'first-post'",
+          "template": "tag.html",
+          "url": "tag/first-post",
+          "language": "en",
+          "tag": "first-post",
+          "date": "2025-09-28 10:04:28 ",
+          "content_type": "pages",
+          "html_content": "<!-- Tag page content will be generated by template -->"
+        },
+        "tag-guide-en": {
+          "name": "tag-guide-en",
+          "title": "Tag: guide",
+          "description": "Posts tagged with 'guide'",
+          "template": "tag.html",
+          "url": "tag/guide",
+          "language": "en",
+          "tag": "guide",
+          "date": "2025-09-28 10:04:28 ",
+          "content_type": "pages",
+          "html_content": "<!-- Tag page content will be generated by template -->"
+        },
+        "tag-static-site-en": {
+          "name": "tag-static-site-en",
+          "title": "Tag: static-site",
+          "description": "Posts tagged with 'static-site'",
+          "template": "tag.html",
+          "url": "tag/static-site",
+          "language": "en",
+          "tag": "static-site",
+          "date": "2025-09-28 10:04:28 ",
+          "content_type": "pages",
+          "html_content": "<!-- Tag page content will be generated by template -->"
+        },
+        "tag-tutorial-en": {
+          "name": "tag-tutorial-en",
+          "title": "Tag: tutorial",
+          "description": "Posts tagged with 'tutorial'",
+          "template": "tag.html",
+          "url": "tag/tutorial",
+          "language": "en",
+          "tag": "tutorial",
+          "date": "2025-09-28 10:04:28 ",
+          "content_type": "pages",
+          "html_content": "<!-- Tag page content will be generated by template -->"
+        },
+        "tag-welcome-en": {
+          "name": "tag-welcome-en",
+          "title": "Tag: welcome",
+          "description": "Posts tagged with 'welcome'",
+          "template": "tag.html",
+          "url": "tag/welcome",
+          "language": "en",
+          "tag": "welcome",
+          "date": "2025-09-28 10:04:28 ",
+          "content_type": "pages",
+          "html_content": "<!-- Tag page content will be generated by template -->"
+        }
+      }
+    },
+    "assets": {
+      "css": [
+        "sites\\demosite\\assets\\css\\archive.css",
+        "sites\\demosite\\assets\\css\\main.css",
+        "themes\\default\\assets\\css\\base.css",
+        "themes\\default\\assets\\css\\footer.css",
+        "themes\\default\\assets\\css\\header.css",
+        "themes\\default\\assets\\css\\isso.css",
+        "themes\\default\\assets\\css\\page.css",
+        "themes\\default\\assets\\css\\post.css",
+        "themes\\default\\assets\\css\\tag.css"
+      ],
+      "images": [
+        "sites\\demosite\\content\\posts\\2025\\2025-01-01-welcome-post\\images\\placeholder.placeholder",
+        "themes\\default\\assets\\images\\default.jpg",
+        "sites\\demosite\\content\\posts\\2025\\2025-01-15-getting-started\\images\\placeholder.placeholder"
+      ],
+      "fonts": [
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-700.woff",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-700.woff2",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-900.woff",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-900.woff2",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-italic.woff",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-italic.woff2",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-regular.woff",
+        "themes\\default\\assets\\fonts\\work-sans-v19-latin-regular.woff2"
+      ],
+      "favicon": [
+        "sites\\demosite\\assets\\favicon\\favicon.ico"
+      ],
+      "js": []
+    },
+    "latest_posts": {
+      "en": {
+        "template": "post.html",
+        "schema": {
+          "type": "BlogPosting"
+        },
+        "draft": false,
+        "file_path": "C:\\a\\repos\\bones\\sites\\demosite\\content\\posts\\2025\\2025-01-15-getting-started\\2025-01-15-getting-started.md",
+        "content_type": "posts",
+        "name": "2025-01-15-getting-started",
+        "title": "Getting Started with Static Site Generation",
+        "date": "2025-01-15 14:30:00+00:00",
+        "url": "getting-started",
+        "description": "Learn how to create and customize your static site",
+        "tags": [
+          "tutorial",
+          "guide",
+          "static-site"
+        ],
+        "language": "en",
+        "content": "\n\n# Getting Started with Static Site Generation\n\nThis is your second post, demonstrating more advanced features of the static site generator.\n\n## What is a Static Site Generator?\n\nA static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:\n\n- **Performance**: Static files load faster than dynamic pages\n- **Security**: No server-side code means fewer vulnerabilities\n- **Reliability**: Fewer moving parts means less can go wrong\n- **Cost**: Can be hosted on simple file hosting services\n\n## Key Features\n\n### Markdown Support\nWrite your content in Markdown for easy formatting:\n\n```markdown\n# This is a heading\n## This is a subheading\n\n- Bullet point 1\n- Bullet point 2\n\n**Bold text** and *italic text*\n```\n\n### Front Matter\nEach post can include metadata at the top:\n\n```yaml\n---\ntitle: \"Your Post Title\"\ndate: \"2025-01-15 14:30:00 +0000\"\nurl: \"your-post-url\"\ndescription: \"A brief description\"\ntags: [\"tag1\", \"tag2\"]\nlanguage: \"en\"\n---\n```\n\n### Template System\nThe generator uses Jinja2 templates for flexible page layouts.\n\n## Next Steps\n\n1. Explore the theme templates in `themes/default/templates/`\n2. Customize the CSS in your site's `assets/css/` directory\n3. Add more content and experiment with different post formats\n4. Configure your site settings in the `config/` directory\n\nHappy building!\n",
+        "html_content": "<h1 id=\"getting-started-with-static-site-generation\">Getting Started with Static Site Generation</h1>\n<p>This is your second post, demonstrating more advanced features of the static site generator.</p>\n<h2 id=\"what-is-a-static-site-generator\">What is a Static Site Generator?</h2>\n<p>A static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:</p>\n<ul>\n<li><strong>Performance</strong>: Static files load faster than dynamic pages</li>\n<li><strong>Security</strong>: No server-side code means fewer vulnerabilities</li>\n<li><strong>Reliability</strong>: Fewer moving parts means less can go wrong</li>\n<li><strong>Cost</strong>: Can be hosted on simple file hosting services</li>\n</ul>\n<h2 id=\"key-features\">Key Features</h2>\n<h3 id=\"markdown-support\">Markdown Support</h3>\n<p>Write your content in Markdown for easy formatting:</p>\n<p>```markdown</p>\n<h1 id=\"this-is-a-heading\">This is a heading</h1>\n<h2 id=\"this-is-a-subheading\">This is a subheading</h2>\n<ul>\n<li>Bullet point 1</li>\n<li>Bullet point 2</li>\n</ul>\n<p><strong>Bold text</strong> and <em>italic text</em>\n```</p>\n<h3 id=\"front-matter\">Front Matter</h3>\n<p>Each post can include metadata at the top:</p>\n<h2 id=\"yaml\">```yaml</h2>\n<p>title: \"Your Post Title\"\ndate: \"2025-01-15 14:30:00 +0000\"\nurl: \"your-post-url\"\ndescription: \"A brief description\"\ntags: [\"tag1\", \"tag2\"]\nlanguage: \"en\"</p>\n<hr />\n<p>```</p>\n<h3 id=\"template-system\">Template System</h3>\n<p>The generator uses Jinja2 templates for flexible page layouts.</p>\n<h2 id=\"next-steps\">Next Steps</h2>\n<ol>\n<li>Explore the theme templates in <code>themes/default/templates/</code></li>\n<li>Customize the CSS in your site's <code>assets/css/</code> directory</li>\n<li>Add more content and experiment with different post formats</li>\n<li>Configure your site settings in the <code>config/</code> directory</li>\n</ol>\n<p>Happy building!</p>",
+        "date_html": "15.01.2025",
+        "date_iso": "2025-01-15T14:30:00+00:00",
+        "read_time": 1,
+        "next_post_url": "",
+        "next_post_title": "",
+        "prev_post_url": "welcome-post",
+        "prev_post_title": "Welcome to DemoSite"
+      }
+    },
+    "comments": {
+      "enabled": true,
+      "isso_url": "",
+      "isso_script_url": ""
+    },
+    "site": {
+      "logo": "DemoSite",
+      "name": "DemoSite",
+      "img": "default.jpg",
+      "theme": "default",
+      "contact": {
+        "email": "contact@DemoSite.com",
+        "subscribe_url": "",
+        "twitter": "",
+        "linkedin": ""
+      }
+    },
+    "languages": {
+      "en": {
+        "site_title": "Welcome to DemoSite",
+        "site_description": "Your site description here",
+        "skip_language_path_in_url": true,
+        "tag_url_prefix": "tag",
+        "html": "en",
+        "xml": "en",
+        "table_of_contents_title": "Table of Contents",
+        "latest": "Latest blog:",
+        "read": "min read",
+        "footer": {
+          "columns": {
+            "left": {
+              "title": "Disclaimer",
+              "content": "This is a sample disclaimer for your new site. You can customize this content."
+            },
+            "right": {
+              "subscribe": {
+                "enabled": false,
+                "title": "Subscribe",
+                "description": "Articles only. No spam. Cancel anytime.",
+                "email_placeholder": "Email",
+                "button_text": "Subscribe"
+              },
+              "tag_cloud": {
+                "title": "Tags",
+                "enabled": true
+              }
+            }
+          }
+        },
+        "posts": {
+          "meta": {
+            "read_time_text": "min read"
+          },
+          "after": {
+            "privacy_notice": "The site does not store any information about you or use cookies when you read articles. Suggestions, comments and questions can also be sent by",
+            "email": "email",
+            "comment_notice": "Note! Commenting uses cookies. Your name, email and website are saved to your browser so you can comment more easily in the future with the same information. Fields are optional and you can leave them empty if you wish."
+          },
+          "comments": {
+            "javascript_required": "Enable Javascript if you want to participate in commenting.",
+            "back_to_top": "Back to comments ↑",
+            "fields": {
+              "name": "Name",
+              "email": "Email",
+              "website": "www"
+            }
+          }
+        },
+        "archive": {
+          "no_posts": "No articles available.",
+          "tag_title": "Tag",
+          "tag_description": "Posts tagged with '{tag}'"
+        }
+      }
+    }
+  }
+}

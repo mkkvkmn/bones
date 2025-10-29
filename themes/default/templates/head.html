@@ -1,0 +1,65 @@
+{% block head %}
+
+    {% import 'partials/_macros.html' as m %}
+    {% set title = m.set_title(doc, config) %}
+    {% set description = m.set_description(doc, config) %}
+    {% set url = m.set_url(doc, config)%}
+    {% set img = m.set_img(doc, config) %}
+
+    <meta charset="UTF-8" />
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="{{ url }}" />
+
+    {# Language alternates #}
+    {% if doc.alternates %}
+        {% for lang_code, alternate_url in doc.alternates.items() %}
+            {% set lang_config = languages.get(lang_code, {}) %}
+            {% if lang_config.get('skip_language_path_in_url', False) %}
+                {% if alternate_url %}
+                    <link rel="alternate" hreflang="{{ lang_code }}" href="{{ env.url }}/{{ alternate_url }}/" />
+                {% else %}
+                    <link rel="alternate" hreflang="{{ lang_code }}" href="{{ env.url }}/" />
+                {% endif %}
+            {% else %}
+                {% if alternate_url %}
+                    <link rel="alternate" hreflang="{{ lang_code }}" href="{{ env.url }}/{{ lang_code }}/{{ alternate_url }}/" />
+                {% else %}
+                    <link rel="alternate" hreflang="{{ lang_code }}" href="{{ env.url }}/{{ lang_code }}/" />
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {# RSS feed alternates #}
+    {% for lang_code, lang_config in languages.items() %}
+        {% if lang_config is mapping and 'skip_language_path_in_url' in lang_config %}
+            {% if lang_config.get('skip_language_path_in_url', False) %}
+                <link rel="alternate" type="application/rss+xml" title="{{ lang_config.site_title }}" href="{{ env.url }}/feed.xml" />
+            {% else %}
+                <link rel="alternate" type="application/rss+xml" title="{{ lang_config.site_title }}" href="{{ env.url }}/{{ lang_code }}/feed.xml" />
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url }}" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{ description }}" />
+    <meta property="og:image" content="{{ img }}" />
+
+    <meta property="twitter:card" content="{{ description }}" />
+    <meta property="twitter:url" content="{{ url }}" />
+    <meta property="twitter:title" content="{{ title }}" />
+    <meta property="twitter:description" content="{{ description }}" />
+    <meta property="twitter:image" content="{{ img }}" />
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    
+    {# Preload fonts to prevent layout shifts #}
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/work-sans-v19-latin-900.woff2" as="font" type="font/woff2" crossorigin />
+{% endblock %}

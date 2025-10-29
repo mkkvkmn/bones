@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="{{ doc.get('language', 'en') }}">
+  <head>
+    {% include 'head.html' %}
+    {% include 'partials/auto-generated/_base_css.html' %}
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    {% include 'header.html' %}
+    <div class="content">
+      <main>
+        {% block content %}{% endblock %}
+      </main>
+      {% include 'footer.html' %}
+      {% block isso %}{% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+---
+title: "About DemoSite"
+description: "Learn more about DemoSite"
+url: "about"
+date: "2025-09-28 09:58:38 +0000"
+template_page: "about/about.html"
+nav_title: "About"
+language: "en"
+---
+
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <h1>{{ doc.title or 'About DemoSite' }}</h1>
+    <p>{{ doc.description or 'Learn more about DemoSite' }}</p>
+    
+    <section>
+        <h2>About This Site</h2>
+        <p>This is a sample about page for your new site. You can customize this content.</p>
+        
+        <h3>Features</h3>
+        <ul>
+            <li>Static site generation with markdown support</li>
+            <li>Theme-based design system</li>
+            <li>Responsive templates</li>
+            <li>Multi-language support</li>
+            <li>Tag-based content organization</li>
+        </ul>
+        
+        <h3>Contact</h3>
+        <p>Feel free to get in touch if you have any questions or suggestions.</p>
+    </section>
+</main>
+{% endblock %}

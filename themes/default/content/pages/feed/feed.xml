@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <atom:link href="{{ env.url }}/{{ doc.target_file or 'feed.xml' }}" rel="self" type="application/rss+xml" />
+    <title>{{ site.name }}</title>
+    <link>{{ env.url }}</link>
+    {% set current_lang = doc.language | default('en') -%}
+    {%- set lang_config = languages.get(current_lang, {}) %}
+    <description>{{ lang_config.site_description | default(site.description | default('Site RSS Feed')) }}</description>
+    <language>{{ lang_config.xml | default(site.lang_xml | default('en')) }}</language>
+    {% set latest_post_for_lang = latest_posts.get(current_lang) if latest_posts else none -%}
+    {% if latest_post_for_lang and latest_post_for_lang.date_xml_feed %}
+    <lastBuildDate>{{ latest_post_for_lang.date_xml_feed }}</lastBuildDate>
+    {% endif %}
+    {% for post in posts %}
+    {%- set post_lang = post.language | default('en') -%}
+    {%- if post_lang == current_lang or (not doc.language and not post.language) %}
+    <item>
+      <title>{{ post.title.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") }}</title>
+      <link>{{ env.url }}/{{ post.url }}/</link>
+      <description><![CDATA[{{ post.html_content | safe }}]]></description>
+      <pubDate>{{ post.date_xml_feed }}</pubDate>
+      <guid>{{ env.url }}/{{ post.url }}/</guid>
+    </item>
+    {% endif %}
+    {% endfor %}
+  </channel>
+</rss>

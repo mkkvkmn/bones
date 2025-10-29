@@ -1,0 +1,59 @@
+---
+title: "Blog"
+description: "All blog posts"
+url: "blog"
+date: "2025-09-28 09:58:38 +0000"
+template_page: "archive/archive.html"
+nav_title: "Blog"
+language: "en"
+---
+
+{% extends "base.html" %}
+
+{% block head %}
+    {% include 'partials/auto-generated/_archive_css.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="archive">
+    <h1>{{ doc.title }}</h1>
+    
+    {% set filtered_posts = [] %}
+    {% for post in posts %}
+        {% if post.language == doc.language %}
+            {% set _ = filtered_posts.append(post) %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if filtered_posts %}
+        <div class="posts-list">
+            {% for post in filtered_posts %}
+                <article class="post-summary">
+                    <h2><a href="{{ env.url }}/{{ post.url }}/">{{ post.title }}</a></h2>
+                    <div class="post-meta">
+                        {{ post.date_html }} - {{ post.read_time or 5 }} {{ languages[doc.language].read }}
+                    </div>
+                    {% if post.description %}
+                    <p class="post-description">{{ post.description }}</p>
+                    {% endif %}
+                    {% if post.tags %}
+                    <div class="post-tags">
+                        {% for tag in post.tags %}
+                        {% set tag_prefix = languages[post.language].get('tag_url_prefix', 'tag') %}
+                        {% if languages[post.language].get('skip_language_path_in_url', False) %}
+                        {% set tag_url = env.url ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}
+                        {% else %}
+                        {% set tag_url = env.url ~ '/' ~ post.language ~ '/' ~ tag_prefix ~ '/' ~ tag ~ '/' %}
+                        {% endif %}
+                        <a href="{{ tag_url }}" class="tag">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>{{ languages[doc.language].archive.no_posts }}</p>
+    {% endif %}
+</div>
+{% endblock %}

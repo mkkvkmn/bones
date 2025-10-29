@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+ <channel>
+  <atom:link href="http://localhost:8000/feed.xml" rel="self" type="application/rss+xml">
+  </atom:link>
+  <title>
+   DemoSite
+  </title>
+  <link/>
+  http://localhost:8000
+  <description>
+   Your site description here
+  </description>
+  <language>
+   en
+  </language>
+  <item>
+   <title>
+    Getting Started with Static Site Generation
+   </title>
+   <link/>
+   http://localhost:8000/getting-started/
+   <description>
+    # Getting Started with Static Site Generation
+
+This is your second post, demonstrating more advanced features of the static site generator.
+
+## What is a Static Site Generator?
+
+A static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:
+
+- **Performance**: Static files load faster than dynamic pages
+- **Security**: No server-side code means fewer vulnerabilities
+- **Reliability**: Fewer moving parts means less can go wrong
+- **Cost**: Can be hosted on simple file hosting services
+
+## Key Features
+
+### Markdown Support
+Write your content in Markdown for easy formatting:
+
+```markdown
+# This is a heading
+## This is a subheading
+
+- Bullet point 1
+- Bullet point 2
+
+**Bold text** and *italic text*
+```
+
+### Front Matter
+Each post can include metadata at the top:
+
+```yaml
+---
+title: "Your Post Title"
+date: "2025-01-15 14:30:00 +0000"
+url: "your-post-url"
+description: "A brief description"
+tags: ["tag1", "tag2"]
+language: "en"
+---
+```
+
+### Template System
+The generator uses Jinja2 templates for flexible page layouts.
+
+## Next Steps
+
+1. Explore the theme templates in `themes/default/templates/`
+2. Customize the CSS in your site's `assets/css/` directory
+3. Add more content and experiment with different post formats
+4. Configure your site settings in the `config/` directory
+
+Happy building!
+   </description>
+   <pubdate>
+   </pubdate>
+   <guid>
+    http://localhost:8000/getting-started/
+   </guid>
+  </item>
+  <item>
+   <title>
+    Welcome to DemoSite
+   </title>
+   <link/>
+   http://localhost:8000/welcome-post/
+   <description>
+    # Welcome to DemoSite
+
+This is your first post. You can edit this file to add your content.
+
+## Getting Started
+
+1. Edit this post in `sites\demosite\content\posts\2025\2025-01-01-welcome-post/2025-01-01-welcome-post.md`
+2. Add images to the `images/` subdirectory
+3. Customize your site configuration in `config/content.yml`
+4. Run the generator to build your site
+
+## Features
+
+- Markdown support with front matter
+- Automatic date processing
+- Tag-based organization
+- Multi-language support
+- Responsive templates
+
+Happy blogging!
+   </description>
+   <pubdate>
+   </pubdate>
+   <guid>
+    http://localhost:8000/welcome-post/
+   </guid>
+  </item>
+ </channel>
+</rss>

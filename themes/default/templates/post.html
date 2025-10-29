@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% include 'partials/auto-generated/_post_css.html' %}
+    {% include 'partials/_schema.html' %}
+{% endblock %}
+
+{% block content %}
+<article class="post">
+  {% if doc.image or site.img %}
+  <div class="row full">
+    <div class="post-image full">
+      {% if doc.image %}
+      <img src="/assets/images/{{ doc.image }}" alt="{{ doc.title }}" />
+      {% else %}
+      <img src="/assets/images/{{ site.img }}" alt="{{ doc.title }}"/>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% if not doc.html_content.startswith('<h1') %}
+  <h1>{{ doc.title }}</h1>
+  {% endif %}
+  <p class="post-meta">
+    {% if doc.date %}
+    {{ doc.date_html }} - {{ doc.read_time }} {{ languages[doc.language or 'fi'].posts.meta.read_time_text }}
+    {% else %}
+    {{ doc.read_time }} {{ languages[doc.language or 'fi'].posts.meta.read_time_text }}
+    {% endif %}
+  </p>
+  <div>{{ doc.html_content | safe }}</div>
+  <div class="post-nav">
+    <div>
+      {% if doc.prev_post_url %}
+      <a href="{{ env.url }}/{{ doc.prev_post_url }}/">
+        &laquo; {{ doc.prev_post_title }}
+      </a>
+      {% endif %}
+    </div>
+    <div>
+      {% if doc.next_post_url %}
+      <a href="{{ env.url }}/{{ doc.next_post_url }}/">
+        {{ doc.next_post_title }} &raquo;
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="post-after">
+    <p>
+      {{ languages[doc.language or 'fi'].posts.after.privacy_notice }}
+      <a href="mailto:{{ site.contact.email }}">{{ languages[doc.language or 'fi'].posts.after.email }}</a>.
+      <br />
+      <br />
+      {% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
+      {{ languages[doc.language or 'fi'].posts.after.comment_notice }}
+      {% endif %}
+    </p>
+  </div>
+  <div id="post-end"></div>
+</article>
+{% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
+<section id="isso-thread">
+  <noscript>
+    {{ languages[doc.language or 'fi'].posts.comments.javascript_required }}
+  </noscript>
+</section>
+<section id="link-to-post-end">
+  <a href="{{ env.url }}/{{ doc.url }}/#post-end">
+    {{ languages[doc.language or 'fi'].posts.comments.back_to_top }}
+  </a>
+</section>
+{% endif %}
+{% endblock %}
+{% block isso %}
+{% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
+<link rel="stylesheet" href="/assets/css/isso.css" />
+<script
+  data-isso="{{ config.content.comments.isso_url }}"
+  src="{{ config.content.comments.isso_script_url }}"
+  data-isso-lang="{{ doc.language or 'fi' }}"
+  data-isso-postbox-author-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.name }}"
+  data-isso-postbox-email-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.email }}"
+  data-isso-postbox-website-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.website }}"
+></script>
+{% endif %}
+{% endblock %}

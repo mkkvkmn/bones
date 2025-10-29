@@ -1,0 +1,47 @@
+{% block head %}
+    {% include 'partials/auto-generated/_header_css.html' %}
+{% endblock %}
+
+{% macro get_language_url(lang_code) -%}
+  {% set lang_config = languages.get(lang_code, {}) %}
+  {% if lang_config.get('skip_language_path_in_url', False) %}
+    {{ env.url }}/
+  {% else %}
+    {{ env.url }}/{{ lang_code }}/
+  {% endif %}
+{%- endmacro %}
+
+<div class="header row">
+  <div class="logo">
+    <a href="{{ get_language_url(doc.language) }}">{{ site.logo }}</a>
+  </div>
+  <label class="hamburger" for="nav-toggle" aria-label="Toggle navigation menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </label>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle">
+  <nav class="navigation">
+    <ul>
+    {% for page_name, page_data in pages.items() %}
+      {% if page_data.nav_title and page_data.language == doc.language %}
+      <li>
+        <a href="{{ env.url }}/{{ page_data.url }}/">{{ page_data.nav_title }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+    {% if config.build.language_switcher and config.build.language_switcher.enabled and config.build.language_switcher.codes %}
+      {% for lang_code in config.build.language_switcher.codes %}
+        {% if lang_code != doc.language %}
+        <li>
+          <a href="{{ get_language_url(lang_code) }}" class="lang-link">
+            {{ lang_code.upper() }}
+            <img src="{{ env.url }}/assets/images/{{ lang_code }}.png" alt="{{ lang_code.upper() }}" width="20" height="15" />
+          </a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    </ul>
+  </nav>
+</div>

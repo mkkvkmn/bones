@@ -36,6 +36,14 @@ article p.post-meta {
   margin-bottom: 20px;
 }
 
+.post-image-vertical {
+  max-width: 300px;
+  border-radius: 12px;
+  display: block;
+  margin: 1.5rem auto;
+  box-shadow: 0 4px 16px rgb(255 255 255 / 15%);
+}
+
 .post-nav {
   display: flex;
   justify-content: space-between;

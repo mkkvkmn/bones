@@ -1,36 +1,33 @@
 /* header */
 .header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   text-transform: uppercase;
   padding: 20px 0px;
   font-weight: 700;
-}
-
-.header.row {
-  justify-content: space-between;
-  align-items: center;
   max-width: 100%;
   margin: auto;
-  padding: 0 20px;
+  padding: 5px 20px;
 }
 
 @media only screen and (min-width: 576px) {
-  .header.row {
+  .header {
     max-width: 540px;
-    padding: 0 20px;
   }
 }
 
 @media only screen and (min-width: 768px) {
-  .header.row {
+  .header {
     max-width: 720px;
-    padding: 0 20px;
+    padding: 8px 20px;
   }
 }
 
 @media only screen and (min-width: 1024px) {
-  .header.row {
+  .header {
     max-width: 1080px;
-    padding: 0 20px;
   }
 }
 

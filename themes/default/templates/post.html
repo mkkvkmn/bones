@@ -58,7 +58,7 @@
   </div>
   <div id="post-end"></div>
   {% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
-  <section id="isso-thread">
+  <section id="isso-thread" data-title="{{ doc.title }}">
     <noscript>
       {{ languages[doc.language or 'fi'].posts.comments.javascript_required }}
     </noscript>

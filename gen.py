@@ -220,7 +220,7 @@ def scan_content_dirs(config: ConfigType) -> ConfigType:
         "posts": [
             year_dir
             for year_dir in (site_dir / "content" / "posts").iterdir()
-            if year_dir.is_dir() and year_dir.name.isdigit()
+            if year_dir.is_dir()
         ],
         "assets": [
             site_dir / "assets",

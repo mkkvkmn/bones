@@ -16,6 +16,9 @@
           <button type="submit">{{ languages[doc.language].footer.columns.right.subscribe.button_text }}</button>
         </form>
       </div>
+      {% if languages[doc.language].footer.columns.right.subscribe.description_after %}
+      <p>{{ languages[doc.language].footer.columns.right.subscribe.description_after | safe }}</p>
+      {% endif %}
     </div>
     {% elif languages[doc.language].footer.columns.right.tag_cloud.enabled %}
     <div class="footer-tag-cloud">

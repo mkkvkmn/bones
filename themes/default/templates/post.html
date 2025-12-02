@@ -57,30 +57,30 @@
     </p>
   </div>
   <div id="post-end"></div>
+  {% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
+  <section id="isso-thread" data-title="{{ doc.title }}">
+    <noscript>
+      {{ languages[doc.language or 'fi'].posts.comments.javascript_required }}
+    </noscript>
+  </section>
+  <section id="link-to-post-end">
+    <a href="{{ env.url }}/{{ doc.url }}/#post-end">
+      {{ languages[doc.language or 'fi'].posts.comments.back_to_top }}
+    </a>
+  </section>
+  {% endif %}
+  {% endblock %}
+  {% block isso %}
+  {% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
+  <link rel="stylesheet" href="/assets/css/isso.css" />
+  <script
+    data-isso="{{ config.content.comments.isso_url }}"
+    src="{{ config.content.comments.isso_script_url }}"
+    data-isso-lang="{{ doc.language or 'fi' }}"
+    data-isso-postbox-author-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.name }}"
+    data-isso-postbox-email-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.email }}"
+    data-isso-postbox-website-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.website }}"
+  ></script>
+  {% endif %}
+  {% endblock %}
 </article>
-{% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
-<section id="isso-thread">
-  <noscript>
-    {{ languages[doc.language or 'fi'].posts.comments.javascript_required }}
-  </noscript>
-</section>
-<section id="link-to-post-end">
-  <a href="{{ env.url }}/{{ doc.url }}/#post-end">
-    {{ languages[doc.language or 'fi'].posts.comments.back_to_top }}
-  </a>
-</section>
-{% endif %}
-{% endblock %}
-{% block isso %}
-{% if config.get('content', {}).get('comments', {}).get('enabled_for_posts', True) %}
-<link rel="stylesheet" href="/assets/css/isso.css" />
-<script
-  data-isso="{{ config.content.comments.isso_url }}"
-  src="{{ config.content.comments.isso_script_url }}"
-  data-isso-lang="{{ doc.language or 'fi' }}"
-  data-isso-postbox-author-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.name }}"
-  data-isso-postbox-email-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.email }}"
-  data-isso-postbox-website-text-{{ doc.language or 'fi' }}="{{ languages[doc.language or 'fi'].posts.comments.fields.website }}"
-></script>
-{% endif %}
-{% endblock %}

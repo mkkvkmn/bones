@@ -220,7 +220,7 @@ def scan_content_dirs(config: ConfigType) -> ConfigType:
         "posts": [
             year_dir
             for year_dir in (site_dir / "content" / "posts").iterdir()
-            if year_dir.is_dir() and year_dir.name.isdigit()
+            if year_dir.is_dir()
         ],
         "assets": [
             site_dir / "assets",
@@ -716,7 +716,11 @@ def clean_output_directory(output_dir: str) -> None:
     output_path = Path(output_dir)
 
     if output_path.exists():
-        shutil.rmtree(output_path)
+        for item in output_path.iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
         logger.debug(f"Cleaned build directory: {output_path}")
 
     output_path.mkdir(parents=True, exist_ok=True)

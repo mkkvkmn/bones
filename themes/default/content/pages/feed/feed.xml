@@ -16,7 +16,7 @@
     {%- set post_lang = post.language | default('en') -%}
     {%- if post_lang == current_lang or (not doc.language and not post.language) %}
     <item>
-      <title>{{ post.title.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") }}</title>
+      <title>{{ post.title|string|replace("&", "&amp;")|replace("<", "&lt;")|replace(">", "&gt;") }}</title>
       <link>{{ env.url }}/{{ post.url }}/</link>
       <description><![CDATA[{{ post.html_content | safe }}]]></description>
       <pubDate>{{ post.date_xml_feed }}</pubDate>

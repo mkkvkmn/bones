@@ -444,6 +444,12 @@ def add_html_to_doc(
         ]
         extension_configs = {"toc": {"title": toc_title}}
 
+        # Check if toc_depth is specified in front matter
+        if "toc_depth" in doc:
+            toc_depth = doc.get("toc_depth")
+            if isinstance(toc_depth, int) and 1 <= toc_depth <= 6:
+                extension_configs["toc"]["toc_depth"] = toc_depth
+
         html_content = markdown.markdown(
             content, extensions=extensions, extension_configs=extension_configs
         )

@@ -645,7 +645,7 @@ language: "en"
                         {{{{ post.date_html }}}} - {{{{ post.read_time or 5 }}}} {{{{ languages[doc.language].read }}}}
                     </div>
                     {{% if post.description %}}
-                    <p class="post-description">{{{{ post.description }}}}</p>
+                    <p class="post-description">{{{{ post.description | replace('\n', ' ') | trim }}}}</p>
                     {{% endif %}}
                     {{% if post.tags %}}
                     <div class="post-tags">

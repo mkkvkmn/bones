@@ -12,16 +12,26 @@
   {% if doc and doc['description'] %}
     {% set description = doc['description'] %}
   {% endif %}
-  {{- description -}}
+  {{- description | replace('\n', ' ') | replace('\r', '') | trim -}}
 {% endmacro %}
 
 {% macro set_url(doc, config) %}
-  {% set url = env.url ~ '/' %}
+  {% set base_url = env.url.rstrip('/') %}
+  {% set url = base_url ~ '/' %}
   {% if doc and doc['target_file'] %}
-    {% set clean_target = doc['target_file'] | replace('index.html', '') %}
-    {% set url = env.url ~ '/' ~ clean_target %}
+    {% set clean_target = doc['target_file'].replace('index.html', '').strip('/') %}
+    {% if clean_target %}
+      {% set url = base_url ~ '/' ~ clean_target ~ '/' %}
+    {% else %}
+      {% set url = base_url ~ '/' %}
+    {% endif %}
   {% elif doc and doc['url'] %}
-    {% set url = env.url ~ '/' ~ doc['url'] ~ '/' %}
+    {% set clean_url = doc['url'].strip('/') %}
+    {% if clean_url %}
+      {% set url = base_url ~ '/' ~ clean_url ~ '/' %}
+    {% else %}
+      {% set url = base_url ~ '/' %}
+    {% endif %}
   {% endif %}
   {{- url -}}
 {% endmacro %}

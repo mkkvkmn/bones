@@ -10,6 +10,7 @@ import re
 import time
 import json
 import warnings
+from urllib.parse import unquote
 from datetime import datetime
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from jinja2 import Environment, FileSystemLoader
@@ -420,6 +421,20 @@ def enrich_doc(
     return doc
 
 
+def normalize_markdown_html(html: str) -> str:
+    """Tidy Python-Markdown output so fragments read cleanly inside templates."""
+    html = re.sub(r"\s*\n\s*</p>", "</p>", html)
+    html = re.sub(r"</p>\s*<p>", "</p>\n<p>", html)
+    html = re.sub(r'<div class="toc">', '<div class="toc">\n', html)
+    html = re.sub(r"</span><ul>", "</span>\n<ul>", html)
+    html = re.sub(r"<ul>\s*<li>", "<ul>\n<li>", html)
+    html = re.sub(r"</li>\s*<li>", "</li>\n<li>", html)
+    html = re.sub(r"</li>\s*</ul>", "</li>\n</ul>", html)
+    html = re.sub(r"</ul>\s*</div>", "</ul>\n</div>", html)
+    html = re.sub(r"</div>\s*<h2", "</div>\n\n<h2", html)
+    return html
+
+
 def add_html_to_doc(
     content: str, doc: Dict[str, Any], config: ConfigType = None
 ) -> Dict[str, Any]:
@@ -453,6 +468,7 @@ def add_html_to_doc(
         html_content = markdown.markdown(
             content, extensions=extensions, extension_configs=extension_configs
         )
+        html_content = normalize_markdown_html(html_content)
     else:
         # Keep non-markdown content as-is (HTML, XML, etc.)
         html_content = content
@@ -789,7 +805,7 @@ def build_css_html_files(config: ConfigType) -> None:
             css_content = re.sub(r"\s*([{:;},])\s*", r"\1", css_content)
             css_content = css_content.strip()
 
-            partial_html = f"<style>\n{css_content}\n</style>"
+            partial_html = f"<style>{css_content}</style>"
             partial_name = f"_{source_path.stem}_css.html"
             partial_path = partials_dir / partial_name
 
@@ -873,6 +889,9 @@ def build_docs(
             try:
                 content_template = template_env.from_string(doc["html_content"])
                 doc["html_content"] = content_template.render(doc=doc, config=config)
+                # Second pass: allow template code introduced via snippets/includes.
+                content_template_2 = template_env.from_string(doc["html_content"])
+                doc["html_content"] = content_template_2.render(doc=doc, config=config)
             except Exception as e:
                 raise ValueError(f"Template rendering error in content: {e}")
 
@@ -891,7 +910,7 @@ def build_docs(
 
             rendered_html = template.render(doc=doc, config=config)
 
-            formatted_html = format_doc(rendered_html, doc.get("name", "??"), config)
+            formatted_html = rendered_html.strip()
 
             validate_doc(formatted_html, doc.get("name", "??"))
 
@@ -948,30 +967,6 @@ def save_doc(rendered_html: str, doc: Dict[str, Any], config: ConfigType) -> Non
 
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(rendered_html)
-
-
-def format_doc(html_content: str, doc_name: str, config: ConfigType) -> str:
-    """Format HTML content based on configuration settings."""
-    warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
-
-    prettify_html = (
-        config.get("build", {}).get("settings", {}).get("prettify_html", False)
-    )
-
-    if prettify_html:
-        if any(item in doc_name for item in ["robots", "feed", "sitemap"]):
-            return html_content  # Skip text files
-        else:
-            return BeautifulSoup(html_content, "html.parser").prettify()
-    else:
-        # Minify html
-        html_content = re.sub(r"\s+", " ", html_content)  # Multiple spaces to single
-        html_content = re.sub(
-            r">\s+<", "><", html_content
-        )  # Remove spaces between tags
-        html_content = re.sub(r"\s+>", ">", html_content)  # Remove spaces before >
-        html_content = re.sub(r"<\s+", "<", html_content)  # Remove spaces after <
-        return html_content.strip()
 
 
 def validate_doc(content: str, doc_name: str) -> None:
@@ -1208,6 +1203,9 @@ def is_valid_url(url: str, valid_urls: Set[str], config: ConfigType) -> bool:
     elif path.endswith("/index.html"):
         path = path[:-10]  # Remove "/index.html"
 
+    # HTML may use percent-encoding (e.g. ä -> %C3%A4); disk paths in valid_urls are Unicode.
+    path = unquote(path)
+
     # Check if path is valid (with or without trailing slash)
     return path in valid_urls or f"{path}/" in valid_urls
 
@@ -1256,14 +1254,15 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
             try:
                 content_template = template_env.from_string(doc["html_content"])
                 doc["html_content"] = content_template.render(doc=doc, config=config)
+                # Second pass: allow template code introduced via snippets/includes.
+                content_template_2 = template_env.from_string(doc["html_content"])
+                doc["html_content"] = content_template_2.render(doc=doc, config=config)
             except Exception as e:
                 raise ValueError(f"Template rendering error in content: {e}")
 
             template_name = doc.get("template_page") or doc.get("template")
             if not template_name:
-                raise ValueError(
-                    f"Template not found for: '{doc.get('name', '??')}'"
-                )
+                raise ValueError(f"Template not found for: '{doc.get('name', '??')}'")
 
             if not Path(template_name).suffix:
                 template_name = f"{template_name}.html"
@@ -1277,7 +1276,7 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
 
             rendered_html = template.render(doc=doc, config=config)
 
-            formatted_html = format_doc(rendered_html, doc.get("name", "??"), config)
+            formatted_html = rendered_html.strip()
 
             save_doc(formatted_html, doc, config)
 

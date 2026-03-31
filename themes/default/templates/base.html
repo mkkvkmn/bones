@@ -3,15 +3,22 @@
   <head>
     {% include 'head.html' %}
     {% include 'partials/auto-generated/_base_css.html' %}
+    
+    {% set header_css %}{% include 'partials/auto-generated/_header_css.html' %}{% endset %}
+    {{- header_css | indent(4, true) }}
     {% block head %}{% endblock %}
+
   </head>
   <body>
     {% include 'header.html' %}
+
     <div class="content">
       <main>
         {% block content %}{% endblock %}
+
       </main>
       {% include 'footer.html' %}
+      
       {% block isso %}{% endblock %}
     </div>
   </body>

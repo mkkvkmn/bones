@@ -214,9 +214,10 @@ def scan_content_dirs(config: ConfigType) -> ConfigType:
     theme_dir = Path(config["build"]["settings"]["theme"]["dir"])
 
     discovery_config = {
+        # Site specific pages should override theme pages
         "pages": [
             theme_dir / "content" / "pages",
-            site_dir / "content" / "pages", # Site specific pages should override theme pages
+            site_dir / "content" / "pages",
         ],
         "posts": [
             year_dir

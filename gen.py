@@ -867,7 +867,41 @@ def build_templates(config: ConfigType) -> Environment:
             return value.strftime(format_str)
         return str(value)
 
+    def sort_by(items: List[Dict[str, Any]], attr: str) -> List[Dict[str, Any]]:
+        """Sort dicts by *attr*; raise ValueError naming the post if any item lacks *attr*."""
+        if not items:
+            return []
+        for item in items:
+            if not isinstance(item, dict):
+                raise TypeError(f"sort_by: expected dict items, got {type(item)!r}")
+            if attr not in item:
+                where = item.get("file_path") or item.get("url") or item.get("name")
+                title = item.get("title", "")
+                post_path = "?"
+                if where:
+                    try:
+                        post_path = str(Path(where).resolve())
+                    except OSError:
+                        post_path = str(Path(where))
+                raise ValueError(
+                    f"|sort_by: missing YAML key {attr!r} in post {title!r} → {post_path}"
+                )
+
+        def key_fn(item: Dict[str, Any]) -> Any:
+            v = item[attr]
+            if isinstance(v, bool):
+                return str(v)
+            if isinstance(v, int):
+                return v
+            try:
+                return int(v)
+            except (TypeError, ValueError):
+                return str(v) if v is not None else ""
+
+        return sorted(items, key=key_fn)
+
     env.filters["format_date"] = format_date
+    env.filters["sort_by"] = sort_by
 
     return env
 
@@ -885,15 +919,10 @@ def build_docs(
     def build_single_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
         """Render a single document using templates."""
         try:
-            # Convert template variables in content
-            try:
-                content_template = template_env.from_string(doc["html_content"])
-                doc["html_content"] = content_template.render(doc=doc, config=config)
-                # Second pass: allow template code introduced via snippets/includes.
-                content_template_2 = template_env.from_string(doc["html_content"])
-                doc["html_content"] = content_template_2.render(doc=doc, config=config)
-            except Exception as e:
-                raise ValueError(f"Template rendering error in content: {e}")
+            content_template = template_env.from_string(doc["html_content"])
+            doc["html_content"] = content_template.render(doc=doc, config=config)
+            content_template_2 = template_env.from_string(doc["html_content"])
+            doc["html_content"] = content_template_2.render(doc=doc, config=config)
 
             template_name = doc.get("template_page") or doc.get("template")
             if not template_name:
@@ -903,7 +932,6 @@ def build_docs(
                 template_name = f"{template_name}.html"
 
             if doc.get("template_page"):
-                # If has template_page, use it as template
                 template = template_env.from_string(doc["html_content"])
             else:
                 template = template_env.get_template(template_name)
@@ -919,8 +947,8 @@ def build_docs(
             return {"success": True, "name": doc.get("name", "??")}
         except Exception as e:
             raise RuntimeError(
-                f"Failed to render document *{doc.get('name', '??')}*: {e}"
-            )
+                f"Failed to render *{doc.get('name', '??')}*: {e}"
+            ) from e
 
     results = parallelize(items_to_build, build_single_doc, description="documents")
 
@@ -1250,15 +1278,10 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
     # Build the single document
     for doc in docs:
         try:
-            # Convert template variables in content
-            try:
-                content_template = template_env.from_string(doc["html_content"])
-                doc["html_content"] = content_template.render(doc=doc, config=config)
-                # Second pass: allow template code introduced via snippets/includes.
-                content_template_2 = template_env.from_string(doc["html_content"])
-                doc["html_content"] = content_template_2.render(doc=doc, config=config)
-            except Exception as e:
-                raise ValueError(f"Template rendering error in content: {e}")
+            content_template = template_env.from_string(doc["html_content"])
+            doc["html_content"] = content_template.render(doc=doc, config=config)
+            content_template_2 = template_env.from_string(doc["html_content"])
+            doc["html_content"] = content_template_2.render(doc=doc, config=config)
 
             template_name = doc.get("template_page") or doc.get("template")
             if not template_name:
@@ -1267,11 +1290,9 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
             if not Path(template_name).suffix:
                 template_name = f"{template_name}.html"
 
-            # If template_page is specified, use the processed content as template
             if doc.get("template_page"):
                 template = template_env.from_string(doc["html_content"])
             else:
-                # Load template from file
                 template = template_env.get_template(template_name)
 
             rendered_html = template.render(doc=doc, config=config)
@@ -1283,9 +1304,7 @@ def build_single_file(config: ConfigType, file_path: str) -> None:
             logger.info(f"Built single file: {doc.get('name', '??')}")
 
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to render document *{doc.get('name', '??')}*: {e}"
-            )
+            raise RuntimeError(f"Failed to render *{doc.get('name', '??')}*: {e}") from e
 
 
 # =============================================================================
@@ -1338,7 +1357,7 @@ def parallelize(
                 if result:
                     results.append(result)
             except Exception as e:
-                raise RuntimeError(f"Failed to parallelize {description}: {e}")
+                raise RuntimeError(f"Failed to parallelize {description}: {e}") from e
 
     return results
 

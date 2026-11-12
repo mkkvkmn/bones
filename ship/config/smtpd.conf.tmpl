@@ -1,0 +1,14 @@
+# /etc/mail/smtpd.conf (server/setup.sh, MAIL_RELAY=tem). Local mail stays local; mail to
+# other domains is relayed through Scaleway Transactional Email over TLS (port 465), which also
+# avoids the hosting provider's port 25 block. Credentials: /etc/mail/ship-secrets (0640 root:_smtpd).
+table aliases file:/etc/mail/aliases
+table secrets file:/etc/mail/ship-secrets
+
+listen on socket
+listen on lo0
+
+action "local" mbox alias <aliases>
+action "tem" relay host smtps://tem@smtp.tem.scw.cloud:465 auth <secrets> mail-from "{{MAIL_FROM}}"
+
+match from local for local action "local"
+match from local for any action "tem"

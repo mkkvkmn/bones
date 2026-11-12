@@ -1,0 +1,5 @@
+# Headers for the isso host. No CSP here: isso's own admin page is served as it ships.
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header X-Frame-Options "DENY" always;
+{{HSTS_LINE}}

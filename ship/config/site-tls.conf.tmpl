@@ -1,0 +1,27 @@
+# {{SITE}}: content only on https://{{DOMAIN}}. http:// and www. redirect there.
+server {
+    listen 80;
+    server_name {{DOMAIN}} www.{{DOMAIN}};
+    include /etc/nginx/ship/acme.inc;
+    location / {
+        return 301 https://{{DOMAIN}}$request_uri;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name www.{{DOMAIN}};
+    ssl_certificate /etc/ssl/{{DOMAIN}}:443.crt;
+    ssl_certificate_key /etc/ssl/private/{{DOMAIN}}:443.key;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    return 301 https://{{DOMAIN}}$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name {{DOMAIN}};
+    ssl_certificate /etc/ssl/{{DOMAIN}}:443.crt;
+    ssl_certificate_key /etc/ssl/private/{{DOMAIN}}:443.key;
+    root {{SITE_ROOT}}/current;
+    include /etc/nginx/ship/{{SITE}}.headers;
+    {{EXTRA_INCLUDE}}
+    include /etc/nginx/ship/static.inc;
+}

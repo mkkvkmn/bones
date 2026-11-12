@@ -1,0 +1,16 @@
+#!/bin/ksh
+# isso comments server (installed as /etc/rc.d/isso by server/setup.sh).
+# Runs as _isso, listens on 127.0.0.1:8081, logs to syslog (daemon.info -> /var/log/daemon).
+
+daemon="/var/isso/venv/bin/isso"
+daemon_flags="-c /etc/isso.conf run"
+daemon_user="_isso"
+daemon_logger="daemon.info"
+
+. /etc/rc.d/rc.subr
+
+pexp=".*${daemon} ${daemon_flags}"
+rc_bg=YES
+rc_reload=NO
+
+rc_cmd $1

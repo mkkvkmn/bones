@@ -4,3 +4,4 @@ sync.ffs_lock
 __pycache__/
 /node_modules/
 .cursor/
+.vscode/

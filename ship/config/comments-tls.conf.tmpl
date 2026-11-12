@@ -1,0 +1,17 @@
+# isso for {{DOMAIN}}: https://comments.{{DOMAIN}} only.
+server {
+    listen 80;
+    server_name comments.{{DOMAIN}};
+    include /etc/nginx/ship/acme.inc;
+    location / {
+        return 301 https://comments.{{DOMAIN}}$request_uri;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name comments.{{DOMAIN}};
+    ssl_certificate /etc/ssl/{{DOMAIN}}:443.crt;
+    ssl_certificate_key /etc/ssl/private/{{DOMAIN}}:443.key;
+    include /etc/nginx/ship/comments.headers;
+    include /etc/nginx/ship/comments.inc;
+}

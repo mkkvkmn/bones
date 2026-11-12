@@ -126,6 +126,19 @@ python gen.py --verbose        # Debug output
 python gen.py -sfp path/to/file.md  # Single file build (fast)
 ```
 
+### build.sh (sites repo next to bones)
+
+From the sites repo root (Git Bash), `bash ../bones/build.sh`:
+
+```bash
+bash ../bones/build.sh                  # list sites
+bash ../bones/build.sh my-site          # dev build
+bash ../bones/build.sh my-site serve    # dev build, serve on envs.dev.url from build.yml
+bash ../bones/build.sh my-site watch    # dev build, serve, rebuild when the site or theme changes
+bash ../bones/build.sh my-site content/posts/2025/my-post/my-post.md  # single file (fast)
+bash ../bones/build.sh my-site prod     # prod build (ship/deploy-site.sh uses this)
+```
+
 ### Single File Build
 
 For large sites you can do fast iteration while writing posts.

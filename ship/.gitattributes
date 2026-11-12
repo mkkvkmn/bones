@@ -1,0 +1,2 @@
+# Server scripts and configs must keep LF line endings.
+ship/** text eol=lf

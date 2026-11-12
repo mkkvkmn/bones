@@ -1,0 +1,7 @@
+
+domain {{DOMAIN}} {
+    alternative names { {{ALT_NAMES}} }
+    domain key "/etc/ssl/private/{{DOMAIN}}:443.key"
+    domain full chain certificate "/etc/ssl/{{DOMAIN}}:443.crt"
+    sign with letsencrypt
+}

@@ -1,0 +1,9 @@
+# isso and the versions it is known to run with (pip install -r). Changing this file makes the
+# next deploy-server.sh rebuild the venv. isso 0.13.0 (2022) needs pkg_resources, which newer
+# Pythons no longer bundle: setuptools < 81 still provides it. Werkzeug stays on the 3.0 line
+# the old server ran (isso 0.13 predates 3.1), at its latest security patch.
+isso==0.13.0
+setuptools<81
+werkzeug>=3.0.6,<3.1
+misaka>=2.1.1,<3
+bleach>=6.1,<7

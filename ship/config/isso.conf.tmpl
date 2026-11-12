@@ -1,0 +1,43 @@
+# /etc/isso.conf (server/setup.sh; owner root:_isso, 0640). Holds secrets: never copy it elsewhere.
+[general]
+dbpath = /var/isso/db/comments.db
+host = https://{{DOMAIN}}/
+max-age = 1h
+notify = {{ISSO_NOTIFY}}
+gravatar = false
+
+[admin]
+enabled = {{ISSO_ADMIN_ENABLED}}
+password = {{ISSO_ADMIN_PASSWORD}}
+
+[server]
+listen = http://127.0.0.1:8081
+public-endpoint = https://comments.{{DOMAIN}}
+trusted-proxies = 127.0.0.1
+
+[smtp]
+username = {{TEM_SMTP_USER}}
+password = {{TEM_SMTP_PASSWORD}}
+host = smtp.tem.scw.cloud
+port = 465
+security = ssl
+to = {{ADMIN_EMAIL}}
+# A display name is required: without one isso uses its own joke name "Ich schrei sonst!".
+from = {{DOMAIN}} comments <{{MAIL_FROM}}>
+timeout = 10
+
+[guard]
+enabled = true
+ratelimit = 2
+direct-reply = 3
+reply-to-self = false
+require-author = false
+require-email = false
+
+[moderation]
+enabled = false
+purge-after = 7d
+
+[rss]
+base = https://{{DOMAIN}}/
+limit = 100

@@ -2,15 +2,18 @@ import argparse
 import functools
 import json
 import logging
+import multiprocessing
 import os
 import pickle
 import re
 import shutil
+import signal
 import sys
+import threading
 import time
 import warnings
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from contextlib import nullcontext
+from concurrent.futures.process import BrokenProcessPool
 from datetime import datetime
 from itertools import repeat
 from pathlib import Path
@@ -42,14 +45,17 @@ PARALLEL_MIN_DOCS = 100  # on a smaller site, starting worker processes costs mo
 ConfigType = Dict[str, Any]
 Doc = Dict[str, Any]
 
+# What each content file became, for the next build of a caller that stays alive (dev.py): file path -> (key, docs)
+PROCESSED_DOCS: Dict[str, Tuple[Any, bytes]] = {}
+
 # =============================================================================
 # 1. CONFIGURATION LOADING
 # =============================================================================
 
 
-def load_initial_config() -> ConfigType:
+def load_initial_config(build_env: Optional[str], site_name: Optional[str], sites_folder: Optional[str]) -> ConfigType:
     """Load initial configuration with args, env, and YAML content."""
-    config = add_yml_content_to_config(add_args_and_env_to_config(init_config()))
+    config = add_yml_content_to_config(add_env_to_config(init_config(), build_env, site_name, sites_folder))
     if config.get("build", {}).get("settings", {}).get("create_config", False):
         save_dict("initial", config, config)
     return config
@@ -69,36 +75,15 @@ def init_config() -> ConfigType:
     }
 
 
-def add_args_and_env_to_config(config: ConfigType) -> ConfigType:
-    """Add command line arguments and environment variables to config."""
-    parser = argparse.ArgumentParser(description="Static Site Generator v4")
-    parser.add_argument("--env", "-e", choices=["dev", "prod"], default=None)
-    parser.add_argument("--verbose", "-v", action="store_true")
-    parser.add_argument("--site-name", "-s", help="Site name (overrides SITE_NAME env var)")
-    parser.add_argument("--sites-folder", "-sf", help="Sites folder path (overrides SITES_FOLDER env var)")
-    parser.add_argument(
-        "--single-file-path",
-        "-sfp",
-        help="Build only a single file (fast mode, skips dependencies). Use full file path.",
-    )
-    args = parser.parse_args()
-
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-
+def add_env_to_config(
+    config: ConfigType, build_env: Optional[str], site_name: Optional[str], sites_folder: Optional[str]
+) -> ConfigType:
+    """Add environment variables to config; the given values (the command line arguments) take precedence."""
     load_dotenv()
     env = config["env"]
     env.update((k, v) for k, v in os.environ.items() if k.startswith(("SITES_FOLDER", "SITE_NAME", "BUILD_ENV")))
-
-    # Command line args take precedence over env vars
-    if args.site_name:
-        env["SITE_NAME"] = args.site_name
-    if args.sites_folder:
-        env["SITES_FOLDER"] = args.sites_folder
-    if args.single_file_path:
-        env["SINGLE_FILE_PATH"] = args.single_file_path
-    if args.env is not None:
-        env["BUILD_ENV"] = args.env
+    given = {"SITE_NAME": site_name, "SITES_FOLDER": sites_folder, "BUILD_ENV": build_env}
+    env.update((k, v) for k, v in given.items() if v)
     env.setdefault("BUILD_ENV", "dev")
 
     logger.info(f"Start: {env['SITE_NAME']} ({env['BUILD_ENV']})")
@@ -234,7 +219,19 @@ def add_processed_content_to_config(config: ConfigType, pool: Optional[ProcessPo
 def process_docs(config: ConfigType, pool: Optional[ProcessPoolExecutor]) -> Tuple[List[Doc], ConfigType]:
     """Convert and enrich all discovered content, updating config directly."""
     items = [*config["content"]["posts"]["items"].values(), *config["content"]["pages"]["items"].values()]
-    results = parallelize(pool, process_single_doc, items, config, description="content files")
+
+    # A file that has not changed since it was processed under this same config gives the same docs
+    config_state = json.dumps(config, default=str)
+    keys = {}
+    for item in items:
+        file_stat = os.stat(item["file_path"])
+        keys[item["file_path"]] = (config_state, file_stat.st_mtime_ns, file_stat.st_size)
+    changed = [item for item in items if PROCESSED_DOCS.get(item["file_path"], (None,))[0] != keys[item["file_path"]]]
+    processed = parallelize(pool, process_single_doc, changed, config, description="content files") if changed else []
+    for item, docs in zip(changed, processed):
+        # A file that failed (no docs) is processed again next time
+        PROCESSED_DOCS[item["file_path"]] = (keys[item["file_path"]] if docs else None, pickle.dumps(docs))
+    results = [pickle.loads(PROCESSED_DOCS[item["file_path"]][1]) for item in items]
 
     posts, pages, errors = [], [], []
     for doc in (doc for docs in results for doc in docs):
@@ -645,7 +642,12 @@ def render_stages(job: Tuple[Tuple[str, str], Tuple[Callable, ...]], config_blob
     """Run a job's render stages for the doc it names (in a worker process on big sites)."""
     (content_type, name), stages = job
     config, template_env = load_build_state(config_blob)
-    return render_doc(config["content"][content_type]["items"][name], template_env, config, stages)
+    try:
+        for stage in stages:
+            result = stage(config["content"][content_type]["items"][name], template_env, config)
+        return result
+    except Exception as e:
+        raise RuntimeError(f"Failed to render *{name}*: {e}") from e
 
 
 def render_string(template_env: Environment, source: str, **context: Any) -> str:
@@ -680,16 +682,6 @@ def render_page(doc: Doc, template_env: Environment, config: ConfigType) -> None
     formatted_html = rendered_html.strip()
     validate_doc(formatted_html, doc.get("name", "??"))
     save_doc(formatted_html, doc, config)
-
-
-def render_doc(doc: Doc, template_env: Environment, config: ConfigType, stages=(render_content, render_page)) -> Any:
-    """Run render stages for a document (all of them builds it) and return the last one's result."""
-    try:
-        for stage in stages:
-            result = stage(doc, template_env, config)
-        return result
-    except Exception as e:
-        raise RuntimeError(f"Failed to render *{doc.get('name', '??')}*: {e}") from e
 
 
 def doc_output_file(doc: Doc, config: ConfigType) -> Path:
@@ -856,32 +848,6 @@ def is_valid_url(url: str, valid_urls: Set[str], base_url: str) -> bool:
 
 
 # =============================================================================
-# BUILD SINGLE FILE
-# =============================================================================
-
-
-def build_single_file(config: ConfigType, file_path: str) -> None:
-    """Build a single file in fast mode, skipping dependencies."""
-    logger.warning("Building a single doc.")
-    logger.warning("Remember to do a full build before publish to refresh dependencies")
-
-    file_path_obj = Path(file_path)
-    content_type = next((t for t in ("posts", "pages") if t in str(file_path_obj)), None)
-    if not content_type:
-        raise ValueError(f"Cannot determine content type for file: {file_path}")
-
-    item = {"file_path": str(file_path_obj.absolute()), "content_type": content_type, "name": file_path_obj.stem}
-    docs = process_single_doc(item, config)
-    if not docs:
-        raise ValueError(f"Failed to process file: {file_path}")
-
-    template_env = build_templates(config)
-    for doc in docs:
-        render_doc(doc, template_env, config)
-        logger.info(f"Built single file: {doc.get('name', '??')}")
-
-
-# =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
@@ -918,7 +884,24 @@ def parallelize(pool: Any, func: Callable, items: List[Any], *args: Any, descrip
         results = pool.map(func, [items[i] for i in order], *shared, chunksize=-(-len(items) // n))
         return [result for _, result in sorted(zip(order, results), key=lambda pair: pair[0])]
     except Exception as e:
+        if isinstance(e, BrokenProcessPool):
+            start_workers.cache_clear()  # the next build starts new ones
         raise RuntimeError(f"Failed to parallelize {description}: {e}") from e
+
+
+@functools.lru_cache(maxsize=1)
+def start_workers(workers: int, log_level: int) -> ProcessPoolExecutor:
+    """The worker processes, which stay for the next build of a caller that stays alive (dev.py)."""
+    return ProcessPoolExecutor(workers, initializer=init_worker, initargs=(log_level,))
+
+
+def init_worker(log_level: int) -> None:
+    """A worker logs like its parent and leaves Ctrl+C to it: the parent stops its workers."""
+    logging.getLogger().setLevel(log_level)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    # A killed parent stops nothing, and its workers would wait for work forever
+    parent = multiprocessing.parent_process()
+    threading.Thread(target=lambda: (parent.join(), os._exit(1)), daemon=True).start()
 
 
 def save_dict(state: str, data: Dict[str, Any], config: ConfigType) -> None:
@@ -963,38 +946,45 @@ def extract_urls_from_json_simple(json_string: str) -> Set[str]:
     }
 
 
-def main() -> None:
+def build(build_env: Optional[str] = None, site_name: Optional[str] = None, sites_folder: Optional[str] = None) -> bool:
+    """Build a site and log how it went; the values left out come from the environment variables."""
     total_start_time = time.time()
     try:
-        config = time_phase("Phase 1: Load initial config", load_initial_config)
+        config = time_phase("Phase 1: Load initial config", load_initial_config, build_env, site_name, sites_folder)
+        config = time_phase("Phase 2: Discover content", add_discovered_to_config, config)
 
-        single_file_path = config["env"].get("SINGLE_FILE_PATH")
-        if single_file_path:
-            time_phase("Single file build", build_single_file, config, single_file_path)
-        else:
-            config = time_phase("Phase 2: Discover content", add_discovered_to_config, config)
-            # Markdown and Jinja are CPU work: doing it in parallel takes processes
+        # Markdown and Jinja are CPU work: doing it in parallel takes processes
+        pool = None
+        if len(doc_refs(config)) >= PARALLEL_MIN_DOCS:
             workers = min(config.get("build", {}).get("envs", {}).get("max_workers", 8), os.cpu_count() or 1)
-            root_logger = logging.getLogger()
-            use_workers = len(doc_refs(config)) >= PARALLEL_MIN_DOCS
-            pool_args = {"initializer": root_logger.setLevel, "initargs": (root_logger.level,)}
-            with ProcessPoolExecutor(workers, **pool_args) if use_workers else nullcontext() as pool:
-                config = time_phase("Phase 3: Process content", add_processed_content_to_config, config, pool)
-                time_phase("Phase 4: Generate site", generate_site, config, pool)
-                time_phase("Phase 5: Validate site", validate_site, config, pool)
+            pool = start_workers(workers, logging.getLogger().level)
+        config = time_phase("Phase 3: Process content", add_processed_content_to_config, config, pool)
+        time_phase("Phase 4: Generate site", generate_site, config, pool)
+        time_phase("Phase 5: Validate site", validate_site, config, pool)
 
         output_dir = Path(config["env"]["output_dir"])
         logger.info(f"Done in: {time.time() - total_start_time:.2f}s (Output: {output_dir})")
-
+        return True
     except (ValueError, RuntimeError) as e:
         logger.error(f"Build failed: {e}")
-        sys.exit(1)
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         import traceback
 
         logger.error(f"Traceback: {traceback.format_exc()}")
-        sys.exit(1)
+    return False
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Static Site Generator v4")
+    parser.add_argument("--env", "-e", choices=["dev", "prod"], default=None)
+    parser.add_argument("--verbose", "-v", action="store_true")
+    parser.add_argument("--site-name", "-s", help="Site name (overrides SITE_NAME env var)")
+    parser.add_argument("--sites-folder", "-sf", help="Sites folder path (overrides SITES_FOLDER env var)")
+    args = parser.parse_args()
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    sys.exit(0 if build(args.env, args.site_name, args.sites_folder) else 1)
 
 
 if __name__ == "__main__":

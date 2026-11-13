@@ -45,7 +45,6 @@ A Python static site generator with multi-language and multi-site support.
    python gen.py                   # Development
    python gen.py --env prod        # Production
    python gen.py --verbose         # Debug output
-   python gen.py -sfp content/posts/2025/2025-01-15-my-post/my-post.md  # Single file (fast)
    ```
 
 ## Project Structure
@@ -123,7 +122,6 @@ python init.py site-name        # Create new site
 python gen.py                   # Build site
 python gen.py --env prod       # Production build
 python gen.py --verbose        # Debug output
-python gen.py -sfp path/to/file.md  # Single file build (fast)
 ```
 
 ### build.sh (sites repo next to bones)
@@ -135,24 +133,13 @@ bash ../bones/build.sh                  # list sites
 bash ../bones/build.sh my-site          # dev build
 bash ../bones/build.sh my-site serve    # dev build, serve on envs.dev.url from build.yml
 bash ../bones/build.sh my-site watch    # dev build, serve, rebuild when the site or theme changes
-bash ../bones/build.sh my-site content/posts/2025/my-post/my-post.md  # single file (fast)
 bash ../bones/build.sh my-site prod     # prod build (ship/deploy-site.sh uses this)
 ```
 
-### Single File Build
+### Watch mode
 
-For large sites you can do fast iteration while writing posts.
-
-Use the single file build mode:
-
-```bash
-python gen.py -s site-name -sf sites -sfp c:/site/content/posts/2025/2025-01-15-my-post/my-post.md
-```
-
-- Use absolute file path
-- Fast
-- Skips dependencies and validation
-- Remember to do a full build before publishing
+`watch` keeps one generator running: a rebuild skips the startup and only reprocesses the content files that changed.
+Every page is still rendered again on each rebuild.
 
 ## Requirements
 

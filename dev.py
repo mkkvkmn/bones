@@ -1,4 +1,4 @@
-"""Serve a site's dev build locally and, with --watch, rebuild it when its sources change.
+"""Serve a site's dev build locally; with --watch, build it first and again when its sources change.
 
 Run from the bones folder (build.sh does this):
     python dev.py --sites-folder ../sites --site-name my-site [--watch]
@@ -8,8 +8,8 @@ The address and output folder come from the site's config/build.yml (envs.dev.ur
 
 import argparse
 import functools
-import subprocess
-import sys
+import importlib
+import os
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -20,7 +20,11 @@ import yaml
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
+import gen
+
 BONES_DIR = Path(__file__).resolve().parent
+GEN_FILE = BONES_DIR / "gen.py"
+gen_loaded = GEN_FILE.stat().st_mtime_ns
 THEMES_DIR = BONES_DIR / "themes"
 # Files gen.py writes into the site folder on every build (besides the env outputs).
 GENERATED_IN_SITE = [Path("config") / "setup.json", Path("templates") / "partials" / "auto-generated"]
@@ -37,9 +41,18 @@ def load_envs(site_dir: Path) -> dict:
 
 
 def run_build(args: argparse.Namespace) -> bool:
-    cmd = [sys.executable, "gen.py", "--env", "dev", "--site-name", args.site_name, "--sites-folder", args.sites_folder]
+    """Build in this process: gen keeps its workers and what the unchanged files became between builds."""
+    global gen_loaded
     started = time.time()
-    ok = subprocess.run(cmd, cwd=BONES_DIR).returncode == 0
+    try:
+        if GEN_FILE.stat().st_mtime_ns != gen_loaded:  # the generator itself changed: new code, new workers
+            gen_loaded = GEN_FILE.stat().st_mtime_ns
+            gen.start_workers.cache_clear()
+            importlib.reload(gen)
+        ok = gen.build("dev", args.site_name, args.sites_folder)
+    except Exception as e:  # a generator that does not load
+        print(f"[dev] {type(e).__name__}: {e}", flush=True)
+        ok = False
     status = "built" if ok else "BUILD FAILED"
     print(f"[dev] {status} in {time.time() - started:.1f}s", flush=True)
     return ok
@@ -114,12 +127,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Serve (and watch) a bones dev build")
     parser.add_argument("--sites-folder", required=True, help="Sites folder relative to bones, e.g. ../sites")
     parser.add_argument("--site-name", required=True)
-    parser.add_argument("--watch", action="store_true", help="Rebuild when the site or theme changes")
+    parser.add_argument("--watch", action="store_true", help="Build, and rebuild when the site or theme changes")
     args = parser.parse_args()
 
+    os.chdir(BONES_DIR)  # gen resolves themes and the sites folder from here
     site_dir = (BONES_DIR / args.sites_folder / args.site_name).resolve()
     envs = load_envs(site_dir)
     out_dir = (BONES_DIR / envs["dev"]["output"]).resolve()
+    if args.watch and not run_build(args):
+        raise SystemExit(1)
     if not (out_dir / "index.html").is_file():
         raise SystemExit(f"No dev build in {out_dir}; build first")
 

@@ -6,7 +6,6 @@
 #   bash ../bones/build.sh <site>            dev build
 #   bash ../bones/build.sh <site> serve      dev build, then serve it (envs.dev.url in build.yml)
 #   bash ../bones/build.sh <site> watch      dev build, serve, rebuild when the site or theme changes
-#   bash ../bones/build.sh <site> <file>     dev build of one content file only (fast, skips indexes)
 #   bash ../bones/build.sh <site> prod       prod build (what deploy-site.sh publishes)
 set -euo pipefail
 
@@ -31,7 +30,7 @@ list_sites() {
 }
 
 usage() {
-  printf 'Usage: build <site> [serve|watch|prod|<content file>]\nSites:\n'
+  printf 'Usage: build <site> [serve|watch|prod]\nSites:\n'
   list_sites
   exit "${1:-0}"
 }
@@ -54,15 +53,6 @@ case "$MODE" in
   "")    gen dev ;;
   prod)  gen prod ;;
   serve) gen dev && dev_server ;;
-  watch) gen dev && dev_server --watch ;;
-  *)
-    file=""
-    for f in "$MODE" "$SITES_ROOT/$SITE/$MODE"; do
-      [ -f "$f" ] && { file="$f"; break; }
-    done
-    [ -n "$file" ] || { printf 'Not a mode or a file: %s\n' "$MODE"; usage 1; }
-    file="$(CDPATH='' cd -- "$(dirname -- "$file")" && pwd)/$(basename -- "$file")"
-    command -v cygpath >/dev/null && file="$(cygpath -w "$file")"
-    gen dev --single-file-path "$file"
-    ;;
+  watch) dev_server --watch ;;
+  *)     printf 'Not a mode: %s\n' "$MODE"; usage 1 ;;
 esac

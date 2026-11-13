@@ -4,7 +4,7 @@ Python static site generator. This repo is public; the real sites live in the pr
 
 ## Commands
 
-- Build one site, from the sites repo root: `bash ../bones/build.sh <site> [prod|serve|watch|<content file>]` (no mode = dev build; `watch` runs until stopped).
+- Build one site, from the sites repo root: `bash ../bones/build.sh <site> [prod|serve|watch]` (no mode = dev build; `watch` runs until stopped).
 - Deploy and server ops: `ship/README.md` (run from the sites repo root).
 
 ## Gotchas

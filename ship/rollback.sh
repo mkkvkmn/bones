@@ -14,7 +14,7 @@ SHIP_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 USAGE_REST="<site> [--list|<release id>]"
 parse_env_arg "$@"
 SITE="${2:-}"; TARGET="${3:-}"
-[ -n "$SITE" ] || log_error "Usage: bash ../bones/ship/rollback.sh ${DEPLOY_ENV} <site> [--list|<release id>]"
+[ -n "$SITE" ] || log_error "Usage: ship sites rollback ${DEPLOY_ENV} <site> [--list|<release id>].$(sites_hint)"
 resolve_sites_root
 load_env
 assert_site "$SITE"

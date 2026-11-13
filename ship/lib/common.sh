@@ -45,8 +45,30 @@ OPTIONAL_EMPTY_KEYS_RE='^(MONITOR_HEARTBEAT_URL|ISSO_ADMIN_ALLOW_IP|BACKUP_AGE_P
 parse_env_arg() {
   case "${1:-}" in
     prod|test) DEPLOY_ENV="$1" ;;
-    *) log_error "Usage: bash ../bones/ship/$(basename -- "$0") prod|test ${USAGE_REST:-}" ;;
+    *)
+      # A site name in the env slot is the common mix-up: say the right order.
+      local hint=""
+      if [ -n "${1:-}" ] && known_sites | grep -qx -- "$1"; then
+        hint=" \"$1\" is a site: the environment comes first: ship sites $(basename -- "$0" .sh) prod $1."
+      fi
+      log_error "Usage: ship sites $(basename -- "$0" .sh) prod|test ${USAGE_REST:-}.${hint}$(sites_hint)"
+      ;;
   esac
+}
+
+# Site names from ship/sites.conf of the sites repo (or the current folder), for hints; works
+# before resolve_sites_root, so a usage error can name them.
+known_sites() {
+  local conf="${SITES_ROOT:-$PWD}/ship/sites.conf"
+  [ -f "$conf" ] && grep -E -v '^[[:space:]]*(#|$)' "$conf" | tr -d '\r' | awk '{print $1}'
+  return 0
+}
+
+sites_hint() {
+  local names
+  names="$(known_sites | paste -sd ' ' -)"
+  [ -n "$names" ] && printf ' Sites: %s' "$names"
+  return 0
 }
 
 # The sites repo is the current directory (or SITES_ROOT). It must hold ship/sites.conf, which
@@ -136,7 +158,7 @@ site_field() { # site_field <name> <1-based field>
 assert_site() {
   local site="$1"
   [[ "$site" =~ ^[a-z0-9][a-z0-9-]*$ ]] || log_error "Bad site name '${site}'"
-  site_field "$site" 1 >/dev/null || log_error "Site '${site}' is not in ship/sites.conf"
+  site_field "$site" 1 >/dev/null || log_error "Site '${site}' is not in ship/sites.conf.$(sites_hint)"
 }
 
 validate_sites_conf() {

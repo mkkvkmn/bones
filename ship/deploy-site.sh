@@ -21,7 +21,7 @@ SHIP_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 USAGE_REST="<site>"
 parse_env_arg "$@"
 SITE="${2:-}"
-[ -n "$SITE" ] || log_error "Usage: bash ../bones/ship/deploy-site.sh ${DEPLOY_ENV} <site>"
+[ -n "$SITE" ] || log_error "Usage: ship sites deploy-site ${DEPLOY_ENV} <site>.$(sites_hint)"
 resolve_sites_root
 load_env
 validate_sites_conf

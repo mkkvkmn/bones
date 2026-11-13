@@ -16,7 +16,16 @@ refuses to run if it finds any of this deployment's in here.
 | Local comment backups | `~/.backups/sites/` |
 
 bones and the sites repo must sit side by side (e.g. `C:\a\repos\bones` and `C:\a\repos\sites`).
-Run everything **from the sites repo root** in Git Bash: `bash ../bones/ship/<script> prod ...`.
+Run everything **from the sites repo root** in Git Bash: `bash ../bones/ship/<script> prod ...`,
+or from anywhere with the `ship` launcher (brain repo): `ship sites <script> prod [args]`. The
+environment always comes right after the script, the site after that:
+
+```cmd
+ship sites deploy-site prod <site>
+ship sites rollback prod <site> --list
+ship sites ops prod check
+ship sites ops help
+```
 
 ## Commands (run on your machine)
 
@@ -28,7 +37,7 @@ Run everything **from the sites repo root** in Git Bash: `bash ../bones/ship/<sc
 | `rollback.sh <env> <site> [--list\|<id>]` | Switch to an earlier kept release |
 | `backup.sh <env>` | Fresh encrypted comment backup, downloaded to `~/.backups/sites/` |
 | `restore.sh <env> --list\|drill [file]\|live <file>` | List, test or restore comment backups (decrypted locally) |
-| `ops.sh <env> <cmd>` | `info`, `status [--test-alert]`, `logs`, `restart`, `maintenance on\|off`, `tls-renew`, `patch`, `backups`, `import-cert`, `ssh` |
+| `ops.sh <env> <cmd>` | `info`, `status [--test-alert]`, `check`, `logs`, `backups`, `ssh`, `restart`, `maintenance on\|off\|status`, `tls-renew`, `patch`, `import-cert`; `ops.sh help` lists them. Same names as the core apps' `ops.sh` |
 
 `server/` holds the scripts that run **on** the server (`setup.sh`, `monitor.sh`,
 `backup-isso.sh`, `auto-update.sh`, `renew-certs.sh`). `deploy-server.sh` installs them; never

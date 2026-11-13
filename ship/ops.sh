@@ -1,27 +1,48 @@
 #!/usr/bin/env bash
 # Day-to-day server commands. Reads the server from env_vars on every run.
+# Same command names as core's ship/scripts/ops.sh where the meaning is the same.
 #
-# Usage (from the sites repo root):  bash ../bones/ship/ops.sh prod <command>
+# Usage:
+#   ship sites ops <prod|test> <command> [args]          (from anywhere, with the ship launcher)
+#   bash ../bones/ship/ops.sh <prod|test> <command> [args]  (sites repo root, Git Bash)
 #
-#   info                       server, user, sites and paths (no secrets)
-#   status [--test-alert]      run the monitor now (or send a test alert by mail + heartbeat)
-#   logs [monitor|nginx|access|daemon|maillog] [-n N] [-f]
-#   restart nginx|isso
-#   maintenance on|off         pause/resume the restart guard and auto-update
-#   tls-renew                  renew certificates now (reloads nginx if one changed)
-#   patch                      run the nightly auto-update now (may reboot after base patches)
-#   backups                    list the encrypted backups on the server
+# Look:
+#   info                       Server, user, sites and paths (no secrets)
+#   status [--test-alert]      Run the monitor now (or send a test alert by mail + heartbeat)
+#   check                      Are nginx and isso running, which release each site serves, maintenance
+#   logs [monitor|nginx|access|daemon|maillog] [-n LINES] [-f]
+#                              Tail a log (default: monitor, 100 lines; -f follows)
+#   backups                    List the encrypted backups on the server
+#
+# Act:
+#   ssh [command...]           Shell (or one command) on the server as SERVER_USER
+#   restart nginx|isso         Restart a service
+#   maintenance on|off|status  Pause / resume the restart guard and auto-update
+#   tls-renew                  Renew certificates now (reloads nginx if one changed)
+#   patch                      Run the nightly auto-update now (may reboot after base patches)
 #   import-cert <domain> <user@old-host>
-#                              copy a live certificate + key from the old server, so a site
+#                              Copy a live certificate + key from the old server, so a site
 #                              keeps HTTPS while DNS moves; then run deploy-server.sh
-#   ssh [command]              shell (or one command) on the server as SERVER_USER
+#
+# Examples:
+#   ship sites ops prod check
+#   ship sites ops prod logs access -f
+#
+# Related: deploy-site.sh <env> <site> (publish a site), rollback.sh <env> <site>, backup.sh / restore.sh.
 set -euo pipefail
 
 SHIP_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+
+# Help is printed from this header, so the list cannot drift from the comment.
+usage() { sed -n '/^# Usage/,/^# Related/p' "$0" | sed 's/^# \{0,1\}//' >&2; exit "${1:-2}"; }
+# Asked for help: no environment needed (the ship launcher shows this list).
+case "${1:-}" in -h | --help | help) usage 0 ;; '') usage ;; esac
+case "${2:-}" in -h | --help | help) usage 0 ;; '') usage ;; esac
+
 # shellcheck source=lib/common.sh
 . "$SHIP_DIR/lib/common.sh"
 
-USAGE_REST="<command> (see the header of ops.sh)"
+USAGE_REST="<command> (ops.sh help lists them)"
 parse_env_arg "$@"
 shift
 CMD="${1:-}"; [ -n "$CMD" ] && shift
@@ -76,8 +97,18 @@ case "$CMD" in
     case "${1:-}" in
       on)  root_cmd touch /var/ship/maintenance && log_success "Maintenance on: restart guard and auto-update paused" ;;
       off) root_cmd rm -f /var/ship/maintenance && log_success "Maintenance off" ;;
-      *) log_error "maintenance on|off" ;;
+      status) root_cmd test -e /var/ship/maintenance && echo on || echo off ;;
+      *) log_error "maintenance on|off|status" ;;
     esac
+    ;;
+  check)
+    # isso only runs when a site has comments, so a stopped isso is shown, not an error.
+    root_cmd rcctl check nginx || true
+    root_cmd rcctl check isso || true
+    sites_lines | while read -r s _; do
+      printf '%-12s %s\n' "$s" "$(root_cmd readlink "/var/www/sites/${s}/current" </dev/null || echo '(not deployed)')"
+    done
+    printf 'maintenance: %s\n' "$(root_cmd test -e /var/ship/maintenance </dev/null && echo on || echo off)"
     ;;
   tls-renew) root_cmd /var/ship/renew-certs.sh ;;
   patch)     root_cmd /var/ship/auto-update.sh ;;
@@ -110,5 +141,5 @@ EOF
     if [ $# -gt 0 ]; then "$SSH_BIN" "${o[@]}" "${SERVER_USER}@${SERVER_IP}" "$@"
     else "$SSH_BIN" -t "${o[@]}" "${SERVER_USER}@${SERVER_IP}"; fi
     ;;
-  *) log_error "Usage: bash ../bones/ship/ops.sh ${DEPLOY_ENV} info|status|logs|restart|maintenance|tls-renew|patch|backups|import-cert|ssh" ;;
+  *) log_error "Unknown command: ${CMD}. Run: ship sites ops help" ;;
 esac

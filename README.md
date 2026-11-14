@@ -128,12 +128,15 @@ python gen.py --verbose        # Debug output
 
 From the sites repo root (Git Bash), `bash ../bones/build.sh`:
 
+From any folder, the `bones` command (brain repo) runs the same: `bones my-site watch`.
+
 ```bash
 bash ../bones/build.sh                  # list sites
 bash ../bones/build.sh my-site          # dev build
 bash ../bones/build.sh my-site serve    # dev build, serve on envs.dev.url from build.yml
 bash ../bones/build.sh my-site watch    # dev build, serve, rebuild when the site or theme changes
 bash ../bones/build.sh my-site prod     # prod build (ship/deploy-site.sh uses this)
+bash ../bones/build.sh my-site publish my-draft   # move content/drafts/*my-draft* to content/posts/<year>/<today>-<slug>/, dated today
 ```
 
 ### Watch mode

@@ -5,6 +5,7 @@ Python static site generator. This repo is public; the real sites live in the pr
 ## Commands
 
 - Build one site, from the sites repo root: `bash ../bones/build.sh <site> [prod|serve|watch]` (no mode = dev build; `watch` runs until stopped).
+- Publish a draft, from the sites repo root: `bash ../bones/build.sh <site> publish <part of draft name>`. It moves the draft to `content/posts/<year>/<today>-<slug>/<today>-<slug>.md`, adds `images/`, and sets the frontmatter `date` to now.
 - Deploy and server ops: `ship/README.md` (run from the sites repo root).
 
 ## Gotchas

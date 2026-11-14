@@ -3,7 +3,8 @@
 # Same command names as core's ship/scripts/ops.sh where the meaning is the same.
 #
 # Usage:
-#   ship sites ops <prod|test> <command> [args]          (from anywhere, with the ship launcher)
+#   ops <site> <prod|test> <command> [args]             (from anywhere, with the ops launcher;
+#                                                        any site: all share this server)
 #   bash ../bones/ship/ops.sh <prod|test> <command> [args]  (sites repo root, Git Bash)
 #
 # Look:
@@ -25,8 +26,8 @@
 #                              keeps HTTPS while DNS moves; then run deploy-server.sh
 #
 # Examples:
-#   ship sites ops prod check
-#   ship sites ops prod logs access -f
+#   ops <site> prod check
+#   ops <site> prod logs access -f
 #
 # Related: deploy-site.sh <env> <site> (publish a site), rollback.sh <env> <site>, backup.sh / restore.sh.
 set -euo pipefail
@@ -141,5 +142,5 @@ EOF
     if [ $# -gt 0 ]; then "$SSH_BIN" "${o[@]}" "${SERVER_USER}@${SERVER_IP}" "$@"
     else "$SSH_BIN" -t "${o[@]}" "${SERVER_USER}@${SERVER_IP}"; fi
     ;;
-  *) log_error "Unknown command: ${CMD}. Run: ship sites ops help" ;;
+  *) log_error "Unknown command: ${CMD}. Run: ops <site>" ;;
 esac

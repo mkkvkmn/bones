@@ -17,14 +17,15 @@ refuses to run if it finds any of this deployment's in here.
 
 bones and the sites repo must sit side by side (e.g. `C:\a\repos\bones` and `C:\a\repos\sites`).
 Run everything **from the sites repo root** in Git Bash: `bash ../bones/ship/<script> prod ...`,
-or from anywhere with the `ship` launcher (brain repo): `ship sites <script> prod [args]`. The
-environment always comes right after the script, the site after that:
+or from anywhere with a launcher that takes the site as the app: `ship <site>
+prod <script> [args]` for these scripts, `ops <site> prod <command> [args]` for the server
+commands of `ops.sh`. deploy-site and rollback act on that site; the other scripts and the ops
+commands act on the whole server, whichever site you name. `ship <site>` and `ops <site>` list them.
 
 ```cmd
-ship sites deploy-site prod <site>
-ship sites rollback prod <site> --list
-ship sites ops prod check
-ship sites ops help
+ship <site> prod deploy-site
+ship <site> prod rollback --list
+ops <site> prod check
 ```
 
 ## Commands (run on your machine)

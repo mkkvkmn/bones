@@ -128,7 +128,7 @@ python gen.py --verbose        # Debug output
 
 From the sites repo root (Git Bash), `bash ../bones/build.sh`:
 
-From any folder, the `bones` command (brain repo) runs the same: `bones my-site watch`.
+From any folder, a `bones` launcher on PATH can run the same: `bones my-site watch`.
 
 ```bash
 bash ../bones/build.sh                  # list sites

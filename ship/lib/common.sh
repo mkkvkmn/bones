@@ -49,9 +49,9 @@ parse_env_arg() {
       # A site name in the env slot is the common mix-up: say the right order.
       local hint=""
       if [ -n "${1:-}" ] && known_sites | grep -qx -- "$1"; then
-        hint=" \"$1\" is a site: the environment comes first: ship sites $(basename -- "$0" .sh) prod $1."
+        hint=" \"$1\" is a site: ship $1 prod $(basename -- "$0" .sh)."
       fi
-      log_error "Usage: ship sites $(basename -- "$0" .sh) prod|test ${USAGE_REST:-}.${hint}$(sites_hint)"
+      log_error "Usage: ship <site> prod|test $(basename -- "$0" .sh), or bash ../bones/ship/$(basename -- "$0") prod|test ${USAGE_REST:-}.${hint}$(sites_hint)"
       ;;
   esac
 }

@@ -120,6 +120,8 @@ It sets `dateModified` in the schema and `lastmod` in the sitemap, and a post sh
 4. **Generate Site**: Render templates
 5. **Validate Site**: Check links and integrity
 
+The build adds `?v=<hash of the file>` to every local `.css` and `.js` URL in the output HTML, so browsers fetch a changed file at once.
+
 ## Commands
 
 ```bash

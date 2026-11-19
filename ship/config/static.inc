@@ -11,6 +11,7 @@ location / {
 location = /404.html {
     internal;
 }
+# The build adds ?v=<hash> to CSS and JS URLs, so a changed file is fetched at once despite this cache time.
 location ^~ /assets/ {
     try_files $uri =404;
     expires 1d;

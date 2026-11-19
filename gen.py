@@ -1,5 +1,6 @@
 import argparse
 import functools
+import hashlib
 import json
 import logging
 import multiprocessing
@@ -40,6 +41,9 @@ YAML_LOADER = getattr(yaml, "CSafeLoader", yaml.SafeLoader)  # libyaml when inst
 JINJA_MARKERS = ("{{", "{%", "{#")
 REQUIRED_ENV_VARS = ["SITES_FOLDER", "SITE_NAME"]
 CONTENT_SUFFIXES = (".md", ".html", ".xml", ".txt")
+ASSET_REF_PATTERN = re.compile(
+    r"""(<(?:script|link)\b[^>]*?\s(?:src|href)=)(["'])([^"'?#]+\.(?:css|js))\2""", re.IGNORECASE
+)
 PARALLEL_MIN_DOCS = 100  # on a smaller site, starting worker processes costs more than it saves
 
 ConfigType = Dict[str, Any]
@@ -506,7 +510,40 @@ def generate_site(config: ConfigType, pool: Optional[ProcessPoolExecutor]) -> No
         jobs = [(ref, (render_page,) if ref[0] == "posts" else (render_content, render_page)) for ref in docs]
         parallelize(pool, render_stages, jobs, pickle.dumps(config), description="documents")
     logger.debug(f"Rendered {len(docs)} docs")
+    version_asset_urls(config)
     create_empty_index_files(config)
+
+
+def version_asset_urls(config: ConfigType) -> None:
+    """Add ?v=<hash of the file> to every local CSS and JS reference in the output HTML.
+
+    The server caches assets for a day (ship/config/static.inc), while HTML is never cached.
+    Without a new URL on each change, a browser can run an old script against new HTML.
+    """
+    output_dir = Path(config["env"]["output_dir"])
+    versions: Dict[Path, str] = {}
+
+    def version(file: Path, html_file: Path, url: str) -> str:
+        if not file.is_file():
+            raise ValueError(f"{html_file.relative_to(output_dir)} references '{url}', but {file} does not exist")
+        if file not in versions:
+            versions[file] = hashlib.sha256(file.read_bytes()).hexdigest()[:8]
+        return versions[file]
+
+    def add_version(match: re.Match, html_file: Path) -> str:
+        prefix, quote, url = match.groups()
+        if url.startswith("//") or re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", url):
+            return match.group(0)  # external, or data:
+        file = output_dir / url.lstrip("/") if url.startswith("/") else html_file.parent / url
+        return f"{prefix}{quote}{url}?v={version(file, html_file, url)}{quote}"
+
+    for root, _, files in os.walk(output_dir):
+        for html_file in (Path(root) / name for name in files if name.endswith(".html")):
+            html = html_file.read_text(encoding="utf-8")
+            versioned = ASSET_REF_PATTERN.sub(lambda match: add_version(match, html_file), html)
+            if versioned != html:
+                with open(html_file, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(versioned)
 
 
 def doc_refs(config: ConfigType) -> Dict[Tuple[str, str], Doc]:

@@ -1,0 +1,8 @@
+# isso for {{DOMAIN}} before the certificate exists.
+server {
+    listen 80;
+    server_name comments.{{DOMAIN}};
+    include /etc/nginx/ship/acme.inc;
+    include /etc/nginx/ship/comments.headers;
+    include /etc/nginx/ship/comments.inc;
+}

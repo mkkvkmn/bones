@@ -1,0 +1,19 @@
+
+{% extends "base.html" -%} 
+
+{% block head %}
+    {% include 'partials/auto-generated/_page_css.html' %}
+{% endblock -%}
+
+{% block content -%}
+    <section class="page">
+        <h1>Page Not Found</h1>
+        <div>
+            <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>
+            <ul>
+                <li>Check the URL for typos.</li>
+                <li>Go to: <a href="{{ env.url }}/">{{ env.url }}/</a></li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,15 @@
+# Proxy to isso on 127.0.0.1:8081. Writes (POST/PUT/DELETE) are rate limited per IP.
+location ~ ^/(admin|login|logout)(/|$) {
+{{ISSO_ADMIN_RULE}}
+    proxy_pass http://127.0.0.1:8081;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+location / {
+    limit_req zone=isso_write burst=5 nodelay;
+    proxy_pass http://127.0.0.1:8081;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}

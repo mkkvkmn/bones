@@ -1,0 +1,31 @@
+defaults:
+  date: 2025-09-28 09:58:38 +0000
+  template: page.html
+  schema:
+    type: WebPage
+  language: en
+tags:
+  enabled: true
+  template: tag.html
+  languages:
+  - en
+items:
+  '404':
+    name: '404'
+    title: Page Not Found
+    description: 404 - Page not found
+    template_page: 404/404.html
+    target_file: 404.html
+    url: '404'
+  feed:
+    name: feed
+    template_page: feed/feed.xml
+    target_file: feed.xml
+  sitemap:
+    name: sitemap
+    template_page: sitemap/sitemap.xml
+    target_file: sitemap.xml
+  robots:
+    name: robots
+    template_page: robots/robots.txt
+    target_file: robots.txt

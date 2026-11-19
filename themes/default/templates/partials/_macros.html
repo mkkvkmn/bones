@@ -1,0 +1,45 @@
+
+{% macro set_title(doc, config) %}
+  {% set title = site.name %}
+  {% if doc and doc['title'] %}
+    {% set title = doc['title'] %}
+  {% endif %}
+  {{- title -}}
+{% endmacro %}
+
+{% macro set_description(doc, config) %}
+  {% set description = site.get('description', '') %}
+  {% if doc and doc['description'] %}
+    {% set description = doc['description'] %}
+  {% endif %}
+  {{- description | replace('\n', ' ') | replace('\r', '') | trim -}}
+{% endmacro %}
+
+{% macro set_url(doc, config) %}
+  {% set base_url = env.url.rstrip('/') %}
+  {% set url = base_url ~ '/' %}
+  {% if doc and doc['target_file'] %}
+    {% set clean_target = doc['target_file'].replace('index.html', '').strip('/') %}
+    {% if clean_target %}
+      {% set url = base_url ~ '/' ~ clean_target ~ '/' %}
+    {% else %}
+      {% set url = base_url ~ '/' %}
+    {% endif %}
+  {% elif doc and doc['url'] %}
+    {% set clean_url = doc['url'].strip('/') %}
+    {% if clean_url %}
+      {% set url = base_url ~ '/' ~ clean_url ~ '/' %}
+    {% else %}
+      {% set url = base_url ~ '/' %}
+    {% endif %}
+  {% endif %}
+  {{- url -}}
+{% endmacro %}
+
+{% macro set_img(doc, config) %}
+  {% set img = env.url ~ '/assets/images/' ~ site.img %}
+  {% if doc and doc['image'] %}
+    {% set img = env.url ~ '/assets/images/' ~ doc['image'] %}
+  {% endif %}
+  {{- img -}}
+{% endmacro %}

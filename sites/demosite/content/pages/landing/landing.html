@@ -1,0 +1,44 @@
+---
+title: "DemoSite"
+description: "Welcome to DemoSite"
+url: "landing"
+target_file: "index.html"
+date: "2025-09-28 09:58:38 +0000"
+template_page: "landing/landing.html"
+language: "en"
+---
+
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <section class="hero">
+        <h1>{{ doc.title or 'DemoSite' }}</h1>
+        <p>{{ doc.description or 'Welcome to DemoSite' }}</p>
+    </section>
+    
+    {% if latest_post %}
+    <section class="latest-post">
+        <h2>Latest Post</h2>
+        <article>
+            <h3><a href="/{{ latest_post.url }}">{{ latest_post.title }}</a></h3>
+            <p>{{ latest_post.description }}</p>
+            <time>{{ latest_post.date_html }}</time>
+        </article>
+    </section>
+    {% endif %}
+    
+    <section class="welcome">
+        <h2>Welcome to Your New Site</h2>
+        <p>This is your new static site generated with the Bones static site generator. You can customize this landing page by editing the template file.</p>
+        
+        <h3>Getting Started</h3>
+        <ul>
+            <li>Edit this landing page template</li>
+            <li>Add your own content and pages</li>
+            <li>Customize the theme and styling</li>
+            <li>Configure your site settings</li>
+        </ul>
+    </section>
+</main>
+{% endblock %}

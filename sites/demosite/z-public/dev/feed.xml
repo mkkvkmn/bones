@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <atom:link href="http://localhost:8000/feed.xml" rel="self" type="application/rss+xml" />
+    <title>DemoSite</title>
+    <link>http://localhost:8000</link>
+    <description>Your site description here</description>
+    <language>en</language>
+    <lastBuildDate>Wed, 15 Jan 2025 14:30:00 +0000</lastBuildDate>
+    <item>
+      <title>Getting Started with Static Site Generation</title>
+      <link>http://localhost:8000/getting-started/</link>
+      <description><![CDATA[<h1 id="getting-started-with-static-site-generation">Getting Started with Static Site Generation</h1>
+<p>This is your second post, demonstrating more advanced features of the static site generator.</p>
+<h2 id="what-is-a-static-site-generator">What is a Static Site Generator?</h2>
+<p>A static site generator takes your content and templates, then generates a complete website as static HTML files. This approach offers several advantages:</p>
+<ul>
+<li><strong>Performance</strong>: Static files load faster than dynamic pages</li>
+<li><strong>Security</strong>: No server-side code means fewer vulnerabilities</li>
+<li><strong>Reliability</strong>: Fewer moving parts means less can go wrong</li>
+<li><strong>Cost</strong>: Can be hosted on simple file hosting services</li>
+</ul>
+<h2 id="key-features">Key Features</h2>
+<h3 id="markdown-support">Markdown Support</h3>
+<p>Write your content in Markdown for easy formatting:</p>
+<p>```markdown</p>
+<h1 id="this-is-a-heading">This is a heading</h1>
+<h2 id="this-is-a-subheading">This is a subheading</h2>
+<ul>
+<li>Bullet point 1</li>
+<li>Bullet point 2</li>
+</ul>
+<p><strong>Bold text</strong> and <em>italic text</em>
+```</p>
+<h3 id="front-matter">Front Matter</h3>
+<p>Each post can include metadata at the top:</p>
+<h2 id="yaml">```yaml</h2>
+<p>title: "Your Post Title"
+date: "2025-01-15 14:30:00 +0000"
+url: "your-post-url"
+description: "A brief description"
+tags: ["tag1", "tag2"]
+language: "en"</p>
+<hr />
+<p>```</p>
+<h3 id="template-system">Template System</h3>
+<p>The generator uses Jinja2 templates for flexible page layouts.</p>
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li>Explore the theme templates in <code>themes/default/templates/</code></li>
+<li>Customize the CSS in your site's <code>assets/css/</code> directory</li>
+<li>Add more content and experiment with different post formats</li>
+<li>Configure your site settings in the <code>config/</code> directory</li>
+</ol>
+<p>Happy building!</p>]]></description>
+      <pubDate>Wed, 15 Jan 2025 14:30:00 +0000</pubDate>
+      <guid>http://localhost:8000/getting-started/</guid>
+    </item>
+    <item>
+      <title>Welcome to DemoSite</title>
+      <link>http://localhost:8000/welcome-post/</link>
+      <description><![CDATA[<h1 id="welcome-to-demosite">Welcome to DemoSite</h1>
+<p>This is your first post. You can edit this file to add your content.</p>
+<h2 id="getting-started">Getting Started</h2>
+<ol>
+<li>Edit this post in <code>sites\demosite\content\posts\2025\2025-01-01-welcome-post/2025-01-01-welcome-post.md</code></li>
+<li>Add images to the <code>images/</code> subdirectory</li>
+<li>Customize your site configuration in <code>config/content.yml</code></li>
+<li>Run the generator to build your site</li>
+</ol>
+<h2 id="features">Features</h2>
+<ul>
+<li>Markdown support with front matter</li>
+<li>Automatic date processing</li>
+<li>Tag-based organization</li>
+<li>Multi-language support</li>
+<li>Responsive templates</li>
+</ul>
+<p>Happy blogging!</p>]]></description>
+      <pubDate>Wed, 01 Jan 2025 12:00:00 +0000</pubDate>
+      <guid>http://localhost:8000/welcome-post/</guid>
+    </item>
+  </channel>
+</rss>

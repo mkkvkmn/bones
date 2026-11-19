@@ -1,0 +1,10 @@
+# /etc/acme-client.conf (server/setup.sh). One domain block per site follows.
+authority letsencrypt {
+    api url "https://acme-v02.api.letsencrypt.org/directory"
+    account key "/etc/acme/letsencrypt-privkey.pem"
+}
+
+authority letsencrypt-staging {
+    api url "https://acme-staging-v02.api.letsencrypt.org/directory"
+    account key "/etc/acme/letsencrypt-staging-privkey.pem"
+}

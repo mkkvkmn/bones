@@ -1,0 +1,45 @@
+en:
+  site_title: Welcome to DemoSite
+  site_description: Your site description here
+  skip_language_path_in_url: true
+  tag_url_prefix: tag
+  html: en
+  xml: en
+  table_of_contents_title: Table of Contents
+  latest: 'Latest blog:'
+  read: min read
+  footer:
+    columns:
+      left:
+        title: Disclaimer
+        content: This is a sample disclaimer for your new site. You can customize
+          this content.
+      right:
+        subscribe:
+          enabled: false
+          title: Subscribe
+          description: Articles only. No spam. Cancel anytime.
+          email_placeholder: Email
+          button_text: Subscribe
+        tag_cloud:
+          title: Tags
+          enabled: true
+  posts:
+    meta:
+      read_time_text: min read
+      updated_text: Updated
+    after:
+      privacy_notice: This is a sample privacy notice. Customize it for your site. Comments and questions can also be sent by
+      email: email
+      comment_notice: This is a sample comment notice. Customize it for your site.
+    comments:
+      javascript_required: Enable Javascript if you want to participate in commenting.
+      back_to_top: Back to comments ↑
+      fields:
+        name: Name
+        email: Email
+        website: www
+  archive:
+    no_posts: No articles available.
+    tag_title: Tag
+    tag_description: Posts tagged with '{tag}'

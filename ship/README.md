@@ -147,8 +147,11 @@ SHIP_SITE=<site> bash ../bones/ship/ops.sh prod errors           # 5xx, broken l
 - People = page reads by a current browser. Bots: bot words in the agent, no browser agent, or a
   browser version far out of date (scrapers keep one fixed agent). A read with
   `Sec-Fetch-Dest: document` is confirmed; without it (old Safari, fake agents), `read?`.
-- Logs in OpenBSD httpd format can be added as `STATS_DIR/raw/httpd/httpd-*.log.gz` (IP field `-`).
-  They have no user agent, so they count page hits: people and bots together.
+- Logs in OpenBSD httpd format can be added as `STATS_DIR/raw/httpd/httpd-*.log.gz`. On import the
+  IP field becomes `-` and the time is cut to the hour; the file is rewritten in that form. They have no
+  user agent, so they count page hits: people and bots together.
+- When the rules for what is kept change, the next run reads every pulled file again once (minutes)
+  and copies the old database to `STATS_DIR/stats.db.bak` first.
 - Pull at least every 14 days until the stats log has replaced the combined one (the first two
   weeks after deploying it); after that, any time within 400 days.
 

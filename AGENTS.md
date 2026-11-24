@@ -7,6 +7,7 @@ Python static site generator. This repo is public; the real sites live in a priv
 - Build one site, from the folder that holds your sites: `bash ../bones/build.sh <site> [prod|serve|watch]` (no mode = dev build; `watch` runs until stopped).
 - Publish a draft, from the folder that holds your sites: `bash ../bones/build.sh <site> publish <part of draft name>`. It moves the draft to `content/posts/<year>/<today>-<slug>/<today>-<slug>.md`, adds `images/`, and sets the frontmatter `date` to now.
 - Deploy and server ops: `ship/README.md` (run from the folder that holds your sites).
+- Test the stats code, from the repo root: `python -m unittest discover ship`.
 
 ## Gotchas
 
@@ -38,6 +39,6 @@ Paths are relative to the repo root.
 - `ship/README.md`: deploy and server ops for bones sites. Read it first.
 - `ship/deploy-site.sh`: builds one site and publishes it as a new release.
 - `ship/ops.sh`: day-to-day server commands for a site.
-- `ship/stats.py`: visitor stats and errors from nginx logs.
+- `ship/stats.py`: visitor stats and errors from nginx logs. `ship/test_stats.py`: its tests.
 - `.claude/settings.json`: Claude Code settings. `.claude/hooks/`: hook scripts.
 - `README.md`: user guide (setup, configuration, commands).

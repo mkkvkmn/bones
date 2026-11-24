@@ -20,10 +20,12 @@ the same. Raw files in <stats dir>/raw/<env>/:
                     its pages
   error-*.log.gz    nginx error.log, without client address, referrer and query strings
   monitor-*.log.gz  ship monitor.log
-  httpd-*.log.gz    OpenBSD httpd logs (host first, no user agent): page hits, people and bots together
+  httpd-*.log.gz    OpenBSD httpd logs (host first, no user agent): page hits, people and bots
+                    together; the IP field is removed and the time cut to the hour on import
 
 Each request is stored once: a line seen in several pulled files (rotations, snapshots)
 counts as many times as it appears in the one file holding it most often.
+When the reductions change (ANON), the next run copies stats.db to stats.db.bak first.
 Classification rules live in classify(); change RULES when you change it and the stored rows
 are classified again on the next run.
 """
@@ -153,7 +155,7 @@ BOT_UA = re.compile(
 BROWSER_UA = re.compile(r"^Mozilla/5\.0 \(.+\) .*(Chrome|Safari|Firefox|Edg|OPR)/"
                         r"|^(Edg|OPR|Firefox|FxiOS|CriOS|Chrome|Version)/\d+ [md]$", re.I)
 # The same reductions as config/nginx.conf ($stats_agent, $stats_time), applied to every pulled
-# line on import: to the combined log, and to stats and error lines pulled before a rule changed.
+# line on import: to the combined and httpd logs, and to stats and error lines pulled before a rule changed.
 NGINX_BOT = re.compile(r"bot|crawl|spider|slurp|scan|fetch|monitor|uptime|check|preview|feed|rss|"
                        r"reader|archive|python|curl|wget|http|java|headless|lighthouse|semrush|"
                        r"ahrefs|gpt|claude|perplexity", re.I)
@@ -163,7 +165,7 @@ NGINX_MOBILE = re.compile(r"Mobile|Android|iPhone|iPad")
 NGINX_SUBS = re.compile(r"(\d+) (?:subscribers?|readers?)", re.I)
 NGINX_PRODUCT = re.compile(r"[A-Za-z][A-Za-z0-9_-]*")
 REDUCED_BROWSER = re.compile(r"^((Edg|OPR|Firefox|FxiOS|CriOS|Chrome|Version)/\d+)? [md]$")
-ANON = 2  # version of these reductions: a change makes the next run read every raw file again
+ANON = 3  # version of these reductions: a change makes the next run read every raw file again
 
 
 def anon_agent(ua):
@@ -217,6 +219,18 @@ def anon_stats(counts):
             continue
         host, t, req, st, size, ref, ua, lang, fetch = m.groups()
         out[f'{host} [{anon_time(t)}] "{req.partition("?")[0]}" {st} {size} "{ref}" "{anon_agent(ua)}" {lang} {fetch}'] += n
+    return out
+
+
+def anon_httpd(counts):
+    """httpd lines with the time only to the hour: requests that become the same line add up."""
+    out = Counter()
+    for line, n in counts.items():
+        m = RE_HTTPD.match(line)
+        if not m:
+            continue
+        host, t, req, st, size = m.groups()
+        out[f'{host} - - - [{anon_time(t)}] "{req}" {st} {size}'] += n
     return out
 
 
@@ -379,9 +393,9 @@ def import_file(db, path, fmt, comments_host, own_hosts):
             line = line.rstrip("\r\n")
             if line:
                 counts[line] += 1
-    if fmt in ("access", "stats", "error"):
+    if fmt in ("access", "stats", "httpd", "error"):
         anon = {"access": lambda: anon_access(counts, own_hosts), "stats": lambda: anon_stats(counts),
-                "error": lambda: anon_error(counts)}[fmt]()
+                "httpd": lambda: anon_httpd(counts), "error": lambda: anon_error(counts)}[fmt]()
         if anon != counts:  # keep only the reduced lines on disk too
             tmp = path + ".tmp"
             with gzip.open(tmp, "wt", encoding="utf-8") as f:
@@ -437,10 +451,19 @@ def import_file(db, path, fmt, comments_host, own_hosts):
 def run_import(stats_dir, comments_host, domain, quiet=False):
     own_hosts = {domain, "www." + domain} if domain else set()
     db = connect(stats_dir)
-    if meta(db, "anon") != str(ANON):  # the reductions changed: read and rewrite every raw file again
+    # All sites share this database and the server has one comments host (sites.conf allows one).
+    # A site without comments gives none: keep the stored one, or every run for the other site
+    # would classify all rows again (minutes on a few million rows).
+    comments_host = comments_host or meta(db, "comments_host") or ""
+    read_again = meta(db, "anon") != str(ANON)
+    if read_again:  # the reductions changed: read and rewrite every raw file again
         if db.execute("SELECT 1 FROM files LIMIT 1").fetchone():
-            print("Reading all log files again once (the rules for what is kept changed). This can take minutes...",
-                  flush=True)
+            bak = os.path.join(stats_dir, "stats.db.bak")
+            print(f"Reading all log files again once (the rules for what is kept changed). This can take minutes."
+                  f" The database before it: {bak}", flush=True)
+            copy = sqlite3.connect(bak)
+            db.backup(copy)
+            copy.close()
         db.executescript("DELETE FROM hits; DELETE FROM errlog; DELETE FROM files;")
         meta(db, "anon", ANON)
         db.commit()
@@ -467,15 +490,19 @@ def run_import(stats_dir, comments_host, domain, quiet=False):
         meta(db, "rules", RULES)
         meta(db, "comments_host", comments_host or "")
     db.commit()
+    if read_again:
+        db.execute("VACUUM")  # the rows deleted above leave the file at its old size
     return db, done
 
 
 def reclassify(db, comments_host):
-    cols = "id, ts, src, host, method, path, query, status, ua, fetch"
+    cols = "id, ts, src, host, method, path, query, status, ua, fetch, kind"
     updates = []
     for row in db.execute(f"SELECT {cols} FROM hits"):
         r = dict(zip(cols.split(", "), row))
-        updates.append((classify(r, comments_host), r["id"]))
+        kind = classify(r, comments_host)
+        if kind != r["kind"]:  # writing every row rewrites the index: minutes instead of seconds
+            updates.append((kind, r["id"]))
     db.executemany("UPDATE hits SET kind=? WHERE id=?", updates)
 
 

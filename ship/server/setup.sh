@@ -428,7 +428,9 @@ setup_mail() {
     else
         printf '%s\n' "# bones/ship MAIL_RELAY=none: local delivery only" \
             "table aliases file:/etc/mail/aliases" "listen on socket" "listen on lo0" \
-            "action \"local\" mbox alias <aliases>" "match from local for local action \"local\"" > "$TMP/smtpd.conf"
+            "action \"local\" mbox alias <aliases>" \
+            "# Unused: mail queued while MAIL_RELAY=tem stores this action name; without it smtpd can crash on that mail." \
+            "action \"outbound\" relay" "match from local for local action \"local\"" > "$TMP/smtpd.conf"
         rm -f /etc/mail/ship-secrets
         _sec_changed=1
     fi

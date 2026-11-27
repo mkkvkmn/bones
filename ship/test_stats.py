@@ -109,5 +109,21 @@ class ImportTest(unittest.TestCase):
         self.addCleanup(bak.close)
         self.assertEqual(bak.execute("SELECT count(*), sum(n) FROM hits").fetchone(), (4, 4))
 
+class AnonAccessTest(unittest.TestCase):
+    def reduce(self, request):
+        line = f'192.0.2.1 - - [16/Nov/2026:06:02:48 +0000] "{request}" 200 5120 "-" "Chrome/150 d"'
+        return stats.anon_access(stats.Counter({line: 3}), set())
+
+    def test_reducing_twice_gives_the_same_line(self):
+        once = self.reduce("GET /post/?q=1 HTTP/1.1")
+        self.assertEqual(list(once), ['- - - [16/Nov/2026:06:00:00 +0000] "GET /post/ HTTP/1.1" 200 5120 "-" "Chrome/150 d"'])
+        self.assertEqual(stats.anon_access(once, set()), once)
+
+    def test_malformed_request_is_stable_and_keeps_its_count(self):
+        once = self.reduce("GET /a b c")
+        self.assertEqual(list(once.values()), [3])
+        self.assertEqual(stats.anon_access(once, set()), once)
+
+
 if __name__ == "__main__":
     unittest.main()

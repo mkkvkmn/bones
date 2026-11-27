@@ -206,7 +206,9 @@ def anon_access(counts, own_hosts):
             continue
         t, req, st, size, ref, ua = m.groups()
         method, path, _ = split_request(req)
-        out[f'- - - [{anon_time(t)}] "{method} {path}" {st} {size} "{anon_referer(ref, own_hosts)}" "{anon_agent(ua)}"'] += n
+        # Keep the last token (the protocol): a reduced line then reduces to itself, also a malformed request.
+        proto = " " + req.rsplit(" ", 1)[1] if req.count(" ") >= 2 else ""
+        out[f'- - - [{anon_time(t)}] "{method} {path}{proto}" {st} {size} "{anon_referer(ref, own_hosts)}" "{anon_agent(ua)}"'] += n
     return out
 
 
